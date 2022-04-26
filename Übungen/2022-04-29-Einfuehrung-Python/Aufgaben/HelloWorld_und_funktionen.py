@@ -1,4 +1,4 @@
- #!/bin/python
+#!/usr/bin/env python3
 
 # BEISPIELE FÜR FUNKTIONEN:
 
@@ -7,19 +7,22 @@ def FunktionZähltBis3():
     print("2")
     print("3")
 
+
 def FunktionZähltBis3_advanced():
     for i in range(3):
         print(i)
+
 
 def FunktionZähltBisN(N):
     for i in range(N):
         print(i)
 
+
 def FunktionDieEineListeErstellt():
     # 1. Methode
-    liste1 = [1,2,3]
+    liste1 = [1, 2, 3]
     print(liste1)
-    
+
     # 2. Methode
     liste2 = [i for i in range(10)]
     print(liste2)
@@ -29,13 +32,16 @@ def FunktionDieEineListeErstellt():
     for i in range(10):
         liste3.append(i)
     print(liste3)
-    
+
+
 def FunktionDieEinErgebnisAusgibt_Quadrat(x):
     return x**2
+
 
 def schöneFunktionMitEinerBeschreibung():
     '''Diese Funktion ist ganz besonders toll. Schau wie sie glänzt und strahlt.'''
     print("Ich bin so schön")
+
 
 if __name__ == "__main__":
     print("Hello World")
