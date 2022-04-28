@@ -10,7 +10,7 @@ if __name__ == "__main__":
     # ?-te Element der Liste
     print(a[1])
 
-    # Alle Elemente von 0 bis 3 exclusive Element 3!
+    # Alle Elemente von 0 bis 3 exclusive Element 4!
     print(a[0:3])
 
     # Das letzte Element
