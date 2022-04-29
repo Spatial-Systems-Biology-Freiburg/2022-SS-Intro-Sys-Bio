@@ -27,7 +27,15 @@ if __name__ == "__main__":
         ]
     # Für die Weiterverarbeitung wollen wir Benennung und Werte trennen.
     # Lege hierfür separate Variablen an und fülle sie mit den korrekten Werten
-    #
-    #
+    
     # 03-02
-    #
+    # Gebe die erste Spalte mit/ohne Benennung aus
+
+    # 03-03
+    # Verkette die Ergebnisse von Spalte 1,2 und 3 in eine gesamte Liste
+
+    # 03-04
+    # Gib die gesamte Liste bis zur zeile 15 aus.
+
+    # 03-05
+    # was ist das größte Element der Liste/von jeder Spalte?

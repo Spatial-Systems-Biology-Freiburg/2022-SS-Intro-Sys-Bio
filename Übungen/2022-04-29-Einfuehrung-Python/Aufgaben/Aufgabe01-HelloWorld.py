@@ -13,3 +13,4 @@ if __name__ == "__main__":
     #
     # 01-03
     # Führe eine Variable ein, die den Satz enthält, den wir ausgeben wollen
+    pass

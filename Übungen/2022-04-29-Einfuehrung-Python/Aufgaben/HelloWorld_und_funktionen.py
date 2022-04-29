@@ -68,3 +68,4 @@ if __name__ == "__main__":
     #   - Siehe: https://de.wikipedia.org/wiki/Heron-Verfahren
     #
     # 4) Definiere eine Funktion, die den Mittelwert einer Liste von Zahlen berechnet
+    pass

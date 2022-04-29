@@ -20,3 +20,4 @@ if __name__ == "__main__":
     # und einem Durchmesser von 10cm geformt und möchte
     # wissen, um wie viel sich die Oberfläche und damit die für Bakterien
     # relevante Fläche vergrößert, wenn er weitere 300g hinzufügt.
+    pass
