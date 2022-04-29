@@ -7,3 +7,6 @@ if __name__ == "__main__":
 	# neue Liste mit veränderten Werten
 	b = [elem*2 for elem in a]
 	print(b)
+
+	m = max(b)
+	print(m)
