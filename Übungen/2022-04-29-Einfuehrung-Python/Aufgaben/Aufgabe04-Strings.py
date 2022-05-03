@@ -11,5 +11,5 @@ if __name__ == "__main__":
 	# Gibt den letzten buchstaben von jedem Wort aus.
 
 	# 04-04
-	woerter = ["hallo, das hier sollen einfach ein paar ganz ganz komische und klein-geschriebene Wörter sein. Mal schauen, was so passiert!"]
+	woerter = ["hallo, das hier sollen einfach ein paar ganz ganz komische und kleingeschriebene Wörter sein. Mal schauen, was so passiert!"]
 	# Ersetze den Anfangsbuchstaben von jedem Wort durch einen Großuchstaben

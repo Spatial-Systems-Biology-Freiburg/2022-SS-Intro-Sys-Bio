@@ -31,11 +31,27 @@ if __name__ == "__main__":
     # 03-02
     # Gebe die erste Spalte mit/ohne Benennung aus
 
+    # Mit Benennung
+    b1 = [sublist[0] for sublist in a[0:]]
+    print(b1)
+
+    # Ohne Benennung
+    b2 = [sublist[0] for sublist in a[1:]]
+    print(b2)
+
     # 03-03
     # Verkette die Ergebnisse von Spalte 1,2 und 3 in eine gesamte Liste
+    c1 = [sublist[1] for sublist in a[1:]]
+    c2 = [sublist[2] for sublist in a[1:]]
+    c3 = [sublist[3] for sublist in a[1:]]
+    c = c1 + c2 + c3
+    print(c)
 
     # 03-04
     # Gib die gesamte Liste bis zur zeile 15 aus.
+    print(a[0:15])
 
     # 03-05
     # was ist das größte Element der Liste/von jeder Spalte?
+    maxes = [max(sublist) for sublist in a[1:]]
+    print(maxes)
