@@ -1,5 +1,4 @@
 CC:=latexmk
-SRC_DIR:=./src/
 TARGET:=main.tex
 TARGET_HANDOUT:=handout.tex
 OPTIONS:=-shell-escape -pdf
@@ -10,10 +9,10 @@ MAKEFLAGS += -j20
 all: main.pdf handout.pdf
 
 main.pdf:
-	$(CC) $(OPTIONS) --output-directory=$(O_DIR) -cd $(SRC_DIR)/$(TARGET)
+	$(CC) $(OPTIONS) --output-directory=$(O_DIR) $(TARGET)
 
 handout.pdf:
-	$(CC) $(OPTIONS) --output-directory=$(O_DIR) -cd $(SRC_DIR)/$(TARGET_HANDOUT)
+	$(CC) $(OPTIONS) --output-directory=$(O_DIR) $(TARGET_HANDOUT)
 
 fresh: clean all
 
