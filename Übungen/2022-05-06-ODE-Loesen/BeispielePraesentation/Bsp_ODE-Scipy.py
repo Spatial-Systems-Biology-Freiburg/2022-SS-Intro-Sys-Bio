@@ -18,6 +18,6 @@ if __name__ == "__main__":
     t_vals = np.arange(t0, tend, dt)
     y_vals = odeint(RHS, y0, t_vals)
     
-    plt.plot(t_vals, y_vals, label="Lösung der Differentialgleichung")
+    plt.plot(t_vals, y_vals, label="Lösung der Differentialgleichung", marker="o")
     plt.legend()
     plt.show()

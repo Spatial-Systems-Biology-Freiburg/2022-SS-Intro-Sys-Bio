@@ -21,7 +21,7 @@ if __name__ == "__main__":
     for i in range(len(y_vals)-1):
         y_vals[i+1] = y_vals[i] + dt * RHS(t_vals[i], y_vals[i])
       
-    plt.plot(t_vals, y_vals, label="Lösung der Differentialgleichung für dt=" + str(dt))
+    plt.plot(t_vals, y_vals, label="Lösung der Differentialgleichung für dt=" + str(dt), marker="o")
     plt.legend()
     plt.savefig("Euler-Solutions.png")
     plt.show()

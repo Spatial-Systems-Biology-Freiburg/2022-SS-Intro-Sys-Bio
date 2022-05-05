@@ -31,42 +31,41 @@
 \subsection{Lösungen für \acsp{ode}}
 \label{subsec:solving}
 \begin{frame}[fragile]
-	\frametitle{\insertsubsection}
-	\begin{minted}[linenos, fontsize=\scriptsize]{python}
-import numpy as np
+    \frametitle{\insertsubsection}
+    \begin{minted}[linenos, fontsize=\scriptsize, escapeinside=||]{python}
+|\pause|import numpy as np
 import matplotlib.pyplot as plt
 
-def RHS(y, t):
+|\pause|def RHS(y, t):
     return -0.5*y
 
-if __name__ == "__main__":
-    '''Löst eine ODE mit dem einfachen Euler-Verfahren'''
+|\pause|if __name__ == "__main__":
     t0 = 0.0
     tend = 10.0
     dt = 1.0
     y0 = 4.0
 
-    t_vals = np.arange(t0, tend, dt)
+|\pause|    t_vals = np.arange(t0, tend, dt)
     y_vals = np.array([y0]*len(t_vals))
 
+|\pause|    # Hier wird das Eulersche Verfahren zum lösen der ODE verwendet
     for i in range(len(y_vals)-1):
         y_vals[i+1] = y_vals[i] + dt * RHS(t_vals[i], y_vals[i])
 
-    plt.plot(t_vals, y_vals, label="Lösung der Differentialgleichung")
+|\pause|    plt.plot(t_vals, y_vals, label="Lösung der Differentialgleichung", marker="o")
     plt.legend()
     plt.show()
-
 	\end{minted}
 \end{frame}
 
 
 \begin{frame}
-	\frametitle{\insertsubsection}
-	\begin{figure}
-		\centering
-		\includegraphics[width=0.7\textwidth]{media/Euler-Solutions_multiple.png}
-		\caption{Das Euler-Verfahren löst eine \ac{ode} schrittweise mit konstanter Schrittweite.}
-	\end{figure}
+    \frametitle{\insertsubsection}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{media/Euler-Solutions_multiple.png}
+        \caption{Das Euler-Verfahren löst eine \ac{ode} schrittweise mit konstanter Schrittweite.}
+    \end{figure}
 \end{frame}
 
 
