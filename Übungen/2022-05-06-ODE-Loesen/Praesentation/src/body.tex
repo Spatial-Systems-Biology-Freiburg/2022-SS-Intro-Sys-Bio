@@ -30,13 +30,31 @@
 \end{frame}
 
 
-\subsection{Numerische Lösungsverfahren}
+\subsection{Numerische Lösungsverfahren - Euler}
 \label{subsec:numerical-methods}
 \begin{frame}
     \frametitle{\insertsubsection}
-    \begin{enumerate}[<+->]
-        \item[1]
-    \end{enumerate}
+    Gegeben sei eine Differentialgleichung
+    \[\dot{A} = f(A, t) \hspace{1cm} A(0) = A_0\]
+    Idee: berechne mit Differenzenquotienten neue Werte
+    \[\lim\limits_{h\rightarrow0}\frac{A(t + h) - A(t)}{h} = f(A(t), t)\]
+    Teile Zeitinterval auf in $n$ Zeitschritte $dt$.
+    \[\frac{A((n+1)\cdot dt) - A(n\cdot dt)}{dt} = f(A(n\cdot dt), t)\]
+    Umstellen nach $A((n+1)\cdot dt)=:A_{n+1}$ (Kurzschreibweise)
+    \[A_{n+1} = A_n + dt\cdot f(A_n, n\cdot dt)\]
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{\insertsubsection}
+    Zusammenfassung Verfahren: Explizites Euler-Verfahren für Gewöhnliche Differentialgleichungen:
+    \begin{itemize}
+        \item Solange $n\cdot dt < t_{max}$, berechne:
+        \[A_{n+1} = A_n + dt\cdot f(A_n, n\cdot dt)\]
+        \item Gesamtergebnis sind einzelne Werte der Funktion $A$ in dem Zeitinterval $I=[t_0, t_{max}]$
+        \[I = [0, dt, 2dt, \dots, N\cdot dt]\]
+        \[A = [A_0, A_1, A_2, \dots, A_N]\]
+    \end{itemize}
 \end{frame}
 
 
@@ -48,7 +66,7 @@
 |\pause|import numpy as np
 import matplotlib.pyplot as plt
 
-|\pause|def RHS(y, t):
+|\pause|def A(y, t):
     return -0.5*y
 
 |\pause|if __name__ == "__main__":
@@ -68,6 +86,20 @@ import matplotlib.pyplot as plt
     plt.legend()
     plt.show()
 	\end{minted}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{\insertsubsection}
+    \begin{itemize}
+        \item Euler-Verfahren hat schwierigkeiten bei bestimmten "steifen" Problemen
+        \item Deutlich robustere Lösungsmethoden wurden über die letzten Jahrhunderte entwickelt
+        \item Wir brauchen nicht alle Details dazu kennen
+        \item Gibt schon fertig entwickelte libraries, die uns die Arbeit übernehmen zB.
+        \item[] \begin{minted}[fontsize=\scriptsize, escapeinside=||]{python}
+from scipy.integrate import odeint
+                \end{minted}
+    \end{itemize}
 \end{frame}
 
 
