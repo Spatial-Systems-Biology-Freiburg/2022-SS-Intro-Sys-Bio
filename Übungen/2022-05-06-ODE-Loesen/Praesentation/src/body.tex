@@ -5,11 +5,13 @@
 \subsection{Grundideen}
 \label{subsec:basic-concepts}
 \begin{frame}
-	\frametitle{\insertsubsection}
-	\begin{itemize}[<+->]
-		\item Änderung der Variable hängt von Variable selbst ab
-
-	\end{itemize}
+    \frametitle{\insertsubsection}
+    \begin{itemize}[<+->]
+        \item Was ist eine \ac{ode}?
+        \item Gewöhnliche Differentialgleichungen (engl. \acp{ode}) kommen in fast allen Bereichen der Wissenschaften/Natur vor
+        \item Beschreibt Änderung einer Variable
+        \item ... welche von sich selbst oder anderen Variablen abhängt
+    \end{itemize}
 \end{frame}
 
 
@@ -25,6 +27,16 @@
         \[\dot{N} = -\lambda N\]
         \item[$\Rightarrow$] Exponentieller Zerfall: $N=N_0\exp(-\lambda t)$
     \end{itemize}
+\end{frame}
+
+
+\subsection{Numerische Lösungsverfahren}
+\label{subsec:numerical-methods}
+\begin{frame}
+    \frametitle{\insertsubsection}
+    \begin{enumerate}[<+->]
+        \item[1]
+    \end{enumerate}
 \end{frame}
 
 
@@ -59,6 +71,33 @@ import matplotlib.pyplot as plt
 \end{frame}
 
 
+\begin{frame}[fragile]
+    \frametitle{\insertsubsection}
+    \begin{minted}[linenos, fontsize=\scriptsize, escapeinside=||]{python}
+|\pause|import numpy as np
+import matplotlib.pyplot as plt
+from scipy.integrate import odeint
+
+|\pause|def RHS(y, t):
+    return -0.5*y
+
+|\pause|if __name__ == "__main__":
+    t0 = 0.0
+    tend = 10.0
+    dt = 1.0
+    y0 = 4.0
+
+|\pause|    t_vals = np.arange(t0, tend, dt)
+|\pause|    # Hier wird eine routine von scipy zum lösen der ODE verwendet
+    y_vals = odeint(RHS, y0, t_vals)
+
+|\pause|    plt.plot(t_vals, y_vals, label="Lösung der Differentialgleichung", marker="o")
+    plt.legend()
+    plt.show()
+	\end{minted}
+\end{frame}
+
+
 \begin{frame}
     \frametitle{\insertsubsection}
     \begin{figure}
@@ -75,7 +114,13 @@ import matplotlib.pyplot as plt
 \begin{frame}
     \frametitle{\insertsubsection}
     \begin{itemize}[<+->]
-        \item
+        \item Löse die folgende \ac{ode} mit $A(0)=2$ per Hand
+        \[\dot{A} = \alpha\]
+        \item Löse die folgende \ac{ode} mit $A(0)=N$ per Hand
+        \[\dot{A} = - \beta A\]
+        \item Welche Verhaltensweisen zeigen die Lösungen?
+        \item Wie verändert sich die Lösung für verschiedene Parameter $\alpha, \beta$?
+        \item Welches Biologische System könnten diese \acp{ode} beschreiben?
     \end{itemize}
 \end{frame}
 
@@ -86,8 +131,9 @@ import matplotlib.pyplot as plt
     \frametitle{\insertsubsection}
     Gegeben ist die folgende Differentialgleichung
     \[\dot{A} = \alpha - \beta A\]
+    mit $A(0)=0$.
     \begin{enumerate}[<+->]
-        \item Löse diese Differentialgleichung numerisch mit dem Euler-Verfahren.\\
+        \item Löse diese Differentialgleichung numerisch mit dem Euler-Verfahren.
         \item Welche Eigenschaften haben die parameter $\alpha,\beta$?
         \item Welche Probleme können auftreten für verschiedene parameter $\alpha,\beta$?
         \item Welches biologische System könnte dieser Differentialgleichung zugrunde liegen?
@@ -100,10 +146,30 @@ import matplotlib.pyplot as plt
 \label{subsec:exercise-1}
 \begin{frame}
     \frametitle{\insertsubsection}
+    Wir betrachten wie eben die Differentialgleichung
+    \[\dot{A} = \alpha - \beta A\]
+    diesmal mit zeitabhängigem Parameter $\alpha$
+    \[\alpha(t) = \left\{\begin{array}{ll}
+        \alpha & 2n < t \leq 2n+1 \\
+        0 & \, \textrm{sonst} \\
+        \end{array}\right.\]
     \begin{itemize}[<+->]
-        \item
+        \item Wie können wir die Lösung dieser Differentialgleichung berechnen?
     \end{itemize}
 \end{frame}
 
 
+\section{Vorlesung Studienleistung}
+\subsection{Projekt (Studienleistung)}
+\label{subsec:project}
+\begin{frame}
+    \frametitle{\insertsubsection}
+    \begin{itemize}[<+->]
+        \item Arbeit in Gruppen (2-3 Gruppen)
+        \item Erarbeiten von Model zu biologischem System
+        \item Übersetzen in Computer-Simulation
+        \item Diskussion der Ergebnisse in Vortrag
+        \item Themen werden noch bekannt gegeben
+    \end{itemize}
+\end{frame}
 
