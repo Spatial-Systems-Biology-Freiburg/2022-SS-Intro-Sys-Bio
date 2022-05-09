@@ -19,7 +19,7 @@ if __name__ == "__main__":
     y_vals = np.array([y0]*len(t_vals))
     
     for i in range(len(y_vals)-1):
-        y_vals[i+1] = y_vals[i] + dt * RHS(t_vals[i], y_vals[i])
+        y_vals[i+1] = y_vals[i] + dt * RHS(y_vals[i], t_vals[i])
       
     plt.plot(t_vals, y_vals, label="Lösung der Differentialgleichung für dt=" + str(dt), marker="o")
     plt.legend()

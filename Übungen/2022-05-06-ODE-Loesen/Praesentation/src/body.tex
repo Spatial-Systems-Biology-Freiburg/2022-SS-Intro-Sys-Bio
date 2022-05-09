@@ -66,7 +66,7 @@
 |\pause|import numpy as np
 import matplotlib.pyplot as plt
 
-|\pause|def A(y, t):
+|\pause|def RHS(y, t):
     return -0.5*y
 
 |\pause|if __name__ == "__main__":
@@ -80,7 +80,7 @@ import matplotlib.pyplot as plt
 
 |\pause|    # Hier wird das Eulersche Verfahren zum lösen der ODE verwendet
     for i in range(len(y_vals)-1):
-        y_vals[i+1] = y_vals[i] + dt * RHS(t_vals[i], y_vals[i])
+        y_vals[i+1] = y_vals[i] + dt * RHS(y_vals[i], t_vals[i])
 
 |\pause|    plt.plot(t_vals, y_vals, label="Lösung der Differentialgleichung", marker="o")
     plt.legend()
