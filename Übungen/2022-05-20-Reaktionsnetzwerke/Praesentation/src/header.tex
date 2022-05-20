@@ -1,0 +1,57 @@
+\usepackage {acronym}
+\usepackage {amsmath}
+\usepackage {amssymb}
+\usepackage {amsthm}
+\usepackage [german]{babel}
+\usepackage {booktabs}
+\usepackage [skip=0pt, belowskip=0pt]{caption}
+\usepackage {clara}
+\usepackage [T1]{fontenc}
+\usepackage {graphicx}
+\usepackage {hyperref}
+\usepackage [utf8]{inputenc}
+\usepackage [outputdir=out]{minted}
+\usepackage {xcolor}
+\usepackage {xkeyval}
+
+% Theme of the presentation
+\usetheme{CambridgeUS}
+
+\usecolortheme{dolphin}
+
+% Declare this - symbol to import pgf files correctly
+\DeclareUnicodeCharacter{2212}{-}
+
+% Define colors of the university Freiburg hy their html value
+\definecolor{Uni-Fr-Red}{HTML}{C41330}
+\definecolor{Uni-Fr-Dark-Blue}{HTML}{00376d}
+\definecolor{Uni-Fr-Mid-Blue}{HTML}{004799}
+\definecolor{Uni-Fr-Light-Blue}{HTML}{5480c1}
+% Apply those colors to the presentation
+\setbeamercolor{normal text}{fg=black,bg=Uni-Fr-Light-Blue!30}
+\setbeamercolor{alerted text}{fg=black}
+\setbeamercolor{example text}{fg=black}
+\setbeamercolor{background canvas}{fg=Uni-Fr-Light-Blue, bg=white}
+\setbeamercolor{palette primary}{fg=white, bg=Uni-Fr-Light-Blue}
+\setbeamercolor{palette secondary}{fg=white, bg=Uni-Fr-Mid-Blue}
+\setbeamercolor{palette tertiary}{fg=white, bg=Uni-Fr-Dark-Blue}
+
+% choose a very! good title
+\title{Reaktionsnetzwerke}
+
+% For short you could for example use the last name only, it's optional as is
+% the short title
+\author[Jonas Pleyer]{Jonas Pleyer}
+
+% Can be set, for students usually not required
+%\institute{}
+
+\date{\today}
+
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{subsection in toc}[subsections numbered]
+
+\setbeamertemplate{enumerate items}[\insertenumlabel.]
+
+% Removes the navigation symbols
+\beamertemplatenavigationsymbolsempty{}

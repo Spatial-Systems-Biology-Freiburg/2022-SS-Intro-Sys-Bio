@@ -1,0 +1,23 @@
+% Symbols for Number sets and other stuff
+\newcommand{\Z}{\mathcal{Z}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\Ent}{\mathcal{S}}
+\newcommand{\U}{\mathcal{U}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\e}{\mathit{e}}
+\newcommand{\RP}{\mathbb{R}\text{P}}
+
+% Specify TopRule and Bottomrule Thickness for booktabs usepackage
+\renewcommand{\heavyrulewidth}{2pt}
+
+% If you want that at the beginning of each section the table of contents
+% is shown, I don't like it for short presentations
+\AtBeginSection[]
+{
+    \begin{frame}
+        \frametitle{Table of Contents}
+        \tableofcontents[currentsection, hideothersubsections]
+    \end{frame}
+}
+
+\newacro{ode}[ODE]{Ordinary Differential Equation}
