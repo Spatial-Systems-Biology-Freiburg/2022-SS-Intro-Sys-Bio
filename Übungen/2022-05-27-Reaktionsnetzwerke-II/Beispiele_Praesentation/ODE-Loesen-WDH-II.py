@@ -12,10 +12,11 @@ if __name__ == "__main__":
     k1 = 0.3
     k2 = 0.5
     t = np.linspace(tstart, tend)
-    
+
     results = odeint(f, y0, t, (k1, k2))
 
     for i in range(results.shape[1]):
         plt.plot(t, results[:,i], label="Komponente " + str(i))
     plt.legend()
+    plt.savefig("Michaelis–Menten kinetics.png")
     plt.show()

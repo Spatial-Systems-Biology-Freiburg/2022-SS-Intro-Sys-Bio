@@ -99,6 +99,12 @@ if __name__ == "__main__":
             \dot{B} &= +2\psi A^2
         \end{align}
         \item Wie kombiniere ich nun diese Gleichungen?
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \begin{itemize}
         \item[ ] Einzelne Komponenten aufaddieren und dann alles zusammenschreiben
         \pause
         \begin{align}
@@ -107,6 +113,29 @@ if __name__ == "__main__":
             \dot{C} &= -\phi BC
         \end{align}
     \end{itemize}
+\end{frame}
+
+
+\subsection{Michaelis–Menten kinetics}
+\begin{frame}
+    \frametitle{\insertsubsection}
+    Model findet weitläufig Verwendung:
+    \begin{itemize}[<+->]
+        \item Antigen–Antibody Binding
+        \item DNA–DNA Hybridization
+        \item Protein–Protein Interaction
+    \end{itemize}
+    \begin{align}
+        A+B&\xrightleftharpoons[k_{-1}]{k_1}C\\
+        C&\xrightarrow{k_2}A+D
+    \end{align}
+    Zugehörige ODEs:
+    \begin{align}
+        \dot{A} &= -k_1AB + k_{-1}C + k_2C\\
+        \dot{B} &= -k_1AB + k_{-1}C\\
+        \dot{C} &= +2k_1AB - 2k_{-1}C - 2k_2C\\
+        \dot{D} &= +k_2C
+    \end{align}
 \end{frame}
 
 
