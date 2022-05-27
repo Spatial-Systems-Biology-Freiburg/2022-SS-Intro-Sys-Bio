@@ -1,0 +1,138 @@
+\section{Wiederholung}
+\label{sec:recap}
+
+\subsection{Lösen von ODEs}
+\begin{frame}
+    \frametitle{\insertsubsection}
+    Die folgende ODE beschreibt Protein-Synthese mit Degradation.
+    \[\dot{x} = f(x, t) = \alpha - \beta x\]
+    Hier sind $\alpha$ die Synthetisierungsrate und $\beta$ die Degradationsrate.
+    \pause Fragen:
+    \begin{enumerate}[<+->]
+        \item Welche Einheiten haben $\alpha,\beta$
+        \item Was erwarten wir für ein Verhalten? Warum?
+        \item Wie gehen die Anfangswerte ein?
+        \item Gibt es einen Gleichgewichtszustand? Ist er positiv?
+    \end{enumerate}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \begin{minted}[linenos, fontsize=\scriptsize, escapeinside=||]{python}
+|\pause|from scipy.integrate import odeint
+import matplotlib.pyplot as plt
+import numpy as np
+
+def f(x, t, a, b):
+    return a - b*x
+
+if __name__ == "__main__":
+    tstart = 0.0
+    tend = 10.0
+    y0 = 0.0
+    a = 0.1
+    b = 10.0
+    
+    t = np.linspace(tstart, tend)
+    results = odeint(f, y0, (a, b))
+
+    plt.plot(t, results, label="Ergebnisse der gelösen ODE")
+    plt.legend()
+    plt.show()
+    \end{minted}
+\end{frame}
+
+
+\subsection{Zugehöriges Reaktionsnetzwerk}
+\begin{frame}[fragile]
+    \frametitle{\insertsubsection}
+    Welche Reaktionen laufen in der eben gelösten ODE ab?
+    \[\dot{x} = f(x, t) = \alpha - \beta x\]
+    \pause Erstellung von neuem Protein
+    \[\xrightarrow{\alpha} Y\]
+    \pause Degradation von Protein
+    \[Y \xrightarrow{\beta}\emptyset\]
+    \pause Insgesamt:
+    \[\xrightarrow{\alpha} Y \xrightarrow{\beta}\emptyset\]
+\end{frame}
+
+
+\begin{frame}[fragile]
+    Wie lautet eine ODE zu einem gegebenenen Reaktionsnetzwerk?
+    \begin{align}
+        A+A&\xrightarrow{\psi}B\\
+        B+C&\xrightarrow{\phi}\emptyset
+    \end{align}
+    \begin{itemize}[<+->]
+        \item Wie viele Komponenten haben wir?
+        \item[ ] $\Rightarrow$ 3 Stück: $A, B, C$
+        \item Betrachte zunächst Gleichung 2. Was passiert hier?
+        \item[ ] $\Rightarrow$ $B$ und $C$ reagieren und werden vernichtet. 
+        Die konzentration von $B$ und $C$ muss also kleiner werden.
+        \item Mit welcher Rate passiert das?
+        \pause \begin{align}
+            \dot{B} &= -\phi BC\\
+            \dot{C} &= -\phi BC
+        \end{align}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    Wie lautet eine ODE zu einem gegebenenen Reaktionsnetzwerk?
+    \begin{align}
+        A+A&\xrightarrow{\psi}B\\
+        B+C&\xrightarrow{\phi}\emptyset
+    \end{align}
+    \begin{itemize}[<+->]
+        \item Bisher haben wir:
+        \pause \begin{align}
+            \dot{B} &= -\phi BC\\
+            \dot{C} &= -\phi BC
+        \end{align}
+        \item Betrachte jetzt noch Gleichung 1
+        \item[ ] 2x Stoff $A$ wird umgewandelt zu $B$
+        \item Wie lautet die Reaktions gleichung?
+        \pause
+        \begin{align}
+            \dot{A} &= -2\psi A^2\\
+            \dot{B} &= +2\psi A^2
+        \end{align}
+        \item Wie kombiniere ich nun diese Gleichungen?
+        \item[ ] Einzelne Komponenten aufaddieren und dann alles zusammenschreiben
+        \pause
+        \begin{align}
+            \dot{A} &= -2\psi A^2\\
+            \dot{B} &= +2\psi A^2 -\phi BC\\
+            \dot{C} &= -\phi BC
+        \end{align}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \begin{minted}[linenos, fontsize=\scriptsize, escapeinside=||]{python}
+|\pause|from scipy.integrate import odeint
+import matplotlib.pyplot as plt
+import numpy as np
+
+def f(y, t, k1, k2):
+    return (-2*k1*y[0]**2, 2*k1*y[0]**2 - k2*y[1]*y[2], - k2*y[1]*y[2])
+
+|\pause|if __name__ == "__main__":
+    tstart = 0.0
+    tend = 10.0
+    y0 = (1.0, 0.0, 0.5)
+    k1 = 0.3
+    k2 = 0.5
+    t = np.linspace(tstart, tend)
+    
+|\pause|    results = odeint(f, y0, t, (k1, k2))
+
+|\pause|    for i in range(results.shape[1]):
+        plt.plot(t, results[:,i], label="Komponente " + str(i))
+    plt.legend()
+    plt.show()
+    \end{minted}
+
+\end{frame}
