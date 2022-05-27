@@ -18,5 +18,5 @@ if __name__ == "__main__":
     for i in range(results.shape[1]):
         plt.plot(t, results[:,i], label="Komponente " + str(i))
     plt.legend()
-    plt.savefig("Michaelis–Menten kinetics.png")
+    plt.savefig("Defenitely_not_Michaelis–Menten_kinetics.png")
     plt.show()
