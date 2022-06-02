@@ -3,9 +3,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+
 # Calculate the Right Hand Side of the ODE
 def f(y, t, r):
-    return r*y - y**3
+    # UNVOLLSTÄNDIG 1
+    # Wir wollen die folgende funktion ausrechnen:
+    # f = ry-y^3
+    return 
 
 
 # Are you able to implement the same procedure with this function?
@@ -17,9 +21,14 @@ def g(y, t, a1, a2, n):
 # Can we generalize this function to be usable for f and g simultaneously?
 def calculate_equilibrium(y0, r, t0, tmax):
     # Solve the ODE with values
-    sol = odeint(f, y0, np.linspace(t0, tmax), (r,))
+
+    # UNVOLLSTÄNDIG 2
+    # Hier fehlt noch etwas im Funktionsaufruf
+    sol = odeint(f, y0, np.linspace(t0, tmax))
+
     # Test if the solution has converged
     succ = np.std(sol[-5:])/np.average(sol[-5:]) < 0.1
+    
     # Return the following values:
     # y0 (initial value of y)
     # r the parameter in the ode
@@ -51,4 +60,6 @@ if __name__ == "__main__":
     plt.plot(points_filtered[:,1], points_filtered[:,2], '.', label="$rx - x^3$", c="k")
     plt.legend()
     plt.savefig("Bifurkationsplot.png")
-    plt.show()
+    
+    # UNVOLLSTÄNDIG 3
+    # Warum sehen wir den plot nicht?
