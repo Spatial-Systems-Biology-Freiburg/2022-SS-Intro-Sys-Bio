@@ -10,9 +10,9 @@ def g(y, t, a1, a2, n):
 
 
 if __name__ == "__main__":
-    a1 = 2.0
-    a2 = 3.0
-    n = 3.5
+    a1 = 1
+    a2 = 1
+    n = 1
 
     a = np.linspace(0, 3, num=50)
     b = np.linspace(0, 4, num=50)
@@ -27,4 +27,6 @@ if __name__ == "__main__":
     plt.streamplot(A, B, U, V, linewidth=4*speed/speed.max(), color="k")
     plt.xlabel("Value A")
     plt.ylabel("Value B")
+    plt.title("Phasendiagramm Toggle-Switch")
+    plt.savefig("Phasendiagramm.png")
     plt.show()
