@@ -50,5 +50,5 @@ if __name__ == "__main__":
     plt.title("Bifurcationsdiagramm")
     plt.plot(points_filtered[:,1], points_filtered[:,2], '.', label="$rx - x^3$", c="k")
     plt.legend()
-    plt.savefig("Birufkationsplot.png")
+    plt.savefig("Bifurkationsplot.png")
     plt.show()
