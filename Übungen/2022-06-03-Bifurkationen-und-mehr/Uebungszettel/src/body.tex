@@ -60,7 +60,11 @@ Für welche Werte von $\lambda,\alpha,\beta$ finden wir Bifurkationen, stabile F
 %
 %
 \exercise{Grundlagen}
-Beantworte die folgenden Fragen
+Beantworte die folgenden Fragen zum Toggle-Switch model
+\begin{align}
+    \dot{A} &= \frac{a_1}{1+B^n} - A\\
+    \dot{B} &= \frac{a_2}{1+A^n} - B
+\end{align}
 \begin{itemize}
     \item Gehört dieses System von \acp{ode} zu einer Reaktion, die wir aufschreiben können?
     \item Was möchte man mit diesem mathematischen model biologisch simulieren?
@@ -68,7 +72,32 @@ Beantworte die folgenden Fragen
 \end{itemize}
 %
 %
-\exercise{Analyse des Models}
-...
+\exercise{Nullclinen}
+Berechne die Nullclinen von Hand.
+Schreibe ein Python script, welches die Nullclinen numerisch berechnet und plottet.
+Vergleiche die Ergebnisse mit deinen Berechnungen von Hand.
+Was kann man von den plots ablesen?
+Welche Schlüsse lassen sich ziehen?
+%
+%
+\exercise{Flussdiagramm}
+Das python script "Toggle-Switch-Fluss.py" wurde bereits im Vorhinein angelegt.
+Mache dich mit dem Skript vertraut und versuche zu verstehen, was in den einzelnen Schritten passiert.
+Finde einen Satz von parametern $a_1,a_2,n$, sodass ein Schaubild wie das aus Figur~\ref{fig:toggle-switch-flowdiag} zustande kommt.
+Beantworte die folgenden Fragen
+\begin{itemize}
+    \item Was sehen wir auf dem Plot?
+    \item Wie hilft uns das in der Analyse?
+    \item Was können wir nicht sehen?
+\end{itemize}
+Benutze dein Ergebnis für die geplotteten nullclinen und füge diese dem plot hinzu.
+Macht es Sinn, das in einen plot zu kombinieren?
+Was zeigt uns das resultierende Schaubild?
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{media/Toggle-Switch-Fluss.png}
+    \caption{Flussdiagramm des Toggle-Switch Models}
+    \label{fig:toggle-switch-flowdiag}
+\end{figure}
 %
 %
