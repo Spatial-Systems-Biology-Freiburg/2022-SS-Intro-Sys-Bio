@@ -29,89 +29,11 @@
 
 \maketitle
 
-\section{Introduction}
-\label{sec:introduction}
-\subsection{Historic Overview}
-\label{subsec:introduction-history}
-\begin{frame}{\insertsubsection}
-	
-\end{frame}
-%
-%
-\begin{frame}{\insertsubsection}
-	"We argue that the key properties of biochemical networks should be robust in order to ensure their proper functioning."~\cite{Barkai1997}
-\end{frame}
-%
-%
-\section{Examples from Biology}
-\label{sec:examples}
-\subsection{Calcium Regulation in Mammals}
-\begin{frame}{\insertsubsection}
+\include{01-introduction}
+\include{02-biological-examples}
+\include{03-concepts}
+\include{04-revisiting-biology}
 
-\end{frame}
-%
-%
-\section{Concepts}
-\label{sec:concepts}
-\subsection{Controller Types}
-\label{subsec:concepts-pid-controllers}
-\begin{frame}{\insertsubsection}
-	
-\end{frame}
-%
-%
-\begin{frame}{\insertsubsection}
-\begin{figure}
-	\begin{tikzpicture}
-		% Draw nodes
-		\node [block] (controller) {Controller};
-		\coordinate [left of=controller, node distance=3cm] (init);
-		\node [block, right of=controller, node distance=5cm] (system) {System};
-		\coordinate [right of=system, node distance=3cm] (end);
-		% Draw lines connecting (arrows)
-		\path [line] (init) -- node [midway, above] {Input} (controller);
-		\path [line] (controller) -- node [midway, above] {Control Signal} (system);
-		\path [line] (system) -- node [midway, above] {Output} (end);
-	\end{tikzpicture}
-	\caption{Open Loop Control System}
-\end{figure}
-\end{frame}
-%
-%
-\begin{frame}{\insertsubsection}
-\begin{figure}
-	\begin{tikzpicture}
-		% Draw nodes
-		\node [block] (controller) {Controller};
-		\node [block, right=3cm of controller] (system) {System};
-		\node [block, below right=0.5cm and 0.5cm of controller] (measurement) {Measurement};
-		% Helper coordinates
-		\coordinate [left=2cm of controller] (init);
-		\coordinate [right=2cm of system] (end);
-		\coordinate [right=1cm of system] (measurepoint);
-		\coordinate [below right=0.5cm and 5cm of controller] (rightcorner);
-		\coordinate [below of=controller] (leftcorner);
-		% Draw lines connecting (arrows)
-		\path [line] (init) -- node [midway, above] {Input} (controller);
-		\path [line] (controller) -- node [midway, above] {Control Signal} (system);
-		\path [line] (system) -- node [midway, above] {Output} (end);
-		% \path [line] (measurepoint) -- (rightcorner) -- (measurement);
-		%\draw (measurepoint) to (rightcorner) to (measurement) to (leftcorner) to (controller);
-		\path [line] (measurepoint) |- (measurement);
-		\path [line] (measurement) -| (controller);
-	\end{tikzpicture}
-	\caption{Closed Loop Control System}
-\end{figure}
-\end{frame}
-%
-%
-%
-%
-\subsection{Combinations of Controller}
-\label{subsec:concepts-combinations}
-\begin{frame}{\insertsubsection}
-	
-\end{frame}
 % \begin{frame}[fragile]
 %   \frametitle{Sections}
 %   Sections group slides of the same topic
