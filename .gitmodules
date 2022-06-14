@@ -1,0 +1,3 @@
+[submodule "Vorlesung/2022-06-15-Control-Theory/src/utopia"]
+	path = Vorlesung/2022-06-15-Control-Theory/src/utopia
+	url = https://github.com/xoolive/utopia
