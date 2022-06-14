@@ -1,9 +1,9 @@
 CC:=latexmk
-SRCDIR:=./src/
+SRCDIR:=$(CURDIR)/src/
 TARGET:=main.tex
 TARGET_HANDOUT:=handout.tex
 O_DIR:=$(CURDIR)/out/
-OPTIONS:=-pdflatex=lualatex -pdf -shell-escape --output-directory=$(O_DIR)
+OPTIONS:=-pdflatex=lualatex -pdf -shell-escape --output-directory=$(O_DIR) -cd
 
 
 MAKEFLAGS += -j20
@@ -11,7 +11,7 @@ MAKEFLAGS += -j20
 all: main.pdf
 
 main.pdf:
-	TEXINPUTS=.//: $(CC) $(OPTIONS) $(TARGET)
+	TEXINPUTS=.//: $(CC) $(OPTIONS) $(SRCDIR)/$(TARGET)
 	# $(CC) $(OPTIONS) $(SRCDIR)/$(TARGET)
 
 handout.pdf:
