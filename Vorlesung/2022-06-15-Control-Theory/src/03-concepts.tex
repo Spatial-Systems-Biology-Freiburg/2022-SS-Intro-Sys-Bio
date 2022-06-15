@@ -1,9 +1,14 @@
 \section{Concepts}
 \label{sec:concepts}
-\subsection{Controller Types}
-\label{subsec:concepts-pid-controllers}
+\subsection{Closed and Open Loop}
+\label{subsec:concepts-closed-open-loop}
 \begin{frame}{\insertsubsection}
-	
+	We distinguish between two different controllers
+	\begin{itemize}
+		\item Open Loop Controller
+		\item Closed Loop Controller
+		\item[ ] $\rightarrow$ Closed loop control schemes are the biologically more interesting ones.
+	\end{itemize}
 \end{frame}
 %
 %
@@ -47,15 +52,116 @@
 		\path [line] (measurepoint) |- (measurement);
 		\path [line] (measurement) -| (controller);
 	\end{tikzpicture}
-	\caption{Closed Loop Control System}
+	\caption{Closed Loop Control System with Measurement and Feedback}
 \end{figure}
 \end{frame}
 %
 %
+\subsection{Controller Types}
+\label{subsec:concepts-controller-types}
+\begin{frame}{\insertsubsection}
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth]{media/PID_en}
+		\caption{Schematic Overview of a Controller~\cite{wikiPID2011}}
+	\end{figure}
+	Relevant values:\\
+	$u(t)$ - Response of controller\\
+	$e(t)$ - Difference of input signal and setpoint (target)
+	\begin{equation}
+		e(t) = r(t) - y(t)
+	\end{equation}
+\end{frame}
+%
+%
+\subsubsection{Proportional (P) Controller}
+\label{subsec:concepts-controller-types-p-controller}
+\begin{frame}{\insertsubsubsection}
+	$u(t)$ - Response of controller\\
+	$e(t)$ - Difference of input signal and setpoint (target)\\\\
+	We want to calculate response $u(t)$ from input $e(t)$.\\
+	Use a proportional response
+	\begin{equation}
+		u(t) = K_P e(t)
+	\end{equation}
+\end{frame}
+%
+%
+\subsubsection{Differential (D) Controller}
+\label{subsec:concepts-controller-types-d-controller}
+\begin{frame}{\insertsubsubsection}
+	$u(t)$ - Response of controller\\
+	$e(t)$ - Difference of input signal and setpoint (target)\\\\
+	Differential response
+	\begin{equation}
+		u(t) = K_D \frac{\partial e}{\partial t}
+	\end{equation}
+	In discretized version
+	\begin{equation}
+		u(t_{i+1}) = K_D \frac{e(t_{i+1})- e(t_i)}{\Delta t}
+	\end{equation}
+\end{frame}
+%
+%
+\subsubsection{Integral (I) Controller}
+\label{subsec:concepts-controller-types}
+\begin{frame}{\insertsubsubsection}
+	$u(t)$ - Response of controller\\
+	$e(t)$ - Difference of input signal and setpoint (target)\\\\
+	Differential response
+	\begin{equation}
+		u(t) = K_I \int\limits^t_0 e(\tau)d\tau
+	\end{equation}
+	In discretized version
+	\begin{equation}
+		u(t_{n+1}) = K_I \sum\limits_{i=0}^n e(t_i)\Delta t
+	\end{equation}
+\end{frame}
 %
 %
 \subsection{Combinations of Controller}
 \label{subsec:concepts-combinations}
 \begin{frame}{\insertsubsection}
-	
+	We can combine the previously introduced controllers.\\
+	PD Controller
+	\begin{equation}
+		u(t) = K_P e(t) + K_D \frac{\partial e}{\partial t}
+	\end{equation}
+	PI Controller
+	\begin{equation}
+		u(t) = K_P e(t) + K_I \int\limits^t_0 e(\tau)d\tau
+	\end{equation}
+	PID Controller
+	\begin{equation}
+		u(t) = K_P e(t) + K_I \int\limits^t_0 e(\tau)d\tau + K_D \frac{\partial e}{\partial t}
+	\end{equation}
+	...
+\end{frame}
+%
+%
+\subsubsection{Controller Constants}
+\label{subsec:concepts-controller-constant-discussion}
+\begin{frame}{\insertsubsubsection}
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth]{media/PID_en}
+		\caption{Schematic Overview of a PID Controller~\cite{wikiPID2011}}
+	\end{figure}
+	\begin{align}
+		e(t) &= r(t) - y(t)\\
+		u(t) &= K_P e(t) + K_I \int\limits^t_0 e(\tau)d\tau + K_D \frac{\partial e}{\partial t}
+	\end{align}
+\end{frame}
+%
+%
+\begin{frame}{\insertsubsubsection}
+	What do the parameters $K_P, K_I, K_D$ do?
+	\begin{equation}
+		u(t) = K_P e(t) + K_I \int\limits^t_0 e(\tau)d\tau + K_D \frac{\partial e}{\partial t}
+	\end{equation}
+	Alternative representation
+	\begin{equation}
+		u(t) = K_P \left(e(t) + \frac{1}{T_I}\int\limits^t_0 e(\tau)d\tau + T_D\frac{\partial e}{\partial t}\right)
+	\end{equation}
+	What do $K_p,T_I,T_D$ do now?
 \end{frame}
