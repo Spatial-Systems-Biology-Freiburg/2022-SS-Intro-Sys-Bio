@@ -8,14 +8,13 @@ OPTIONS:=-pdflatex=lualatex -pdf -shell-escape --output-directory=$(O_DIR) -cd
 
 MAKEFLAGS += -j20
 
-all: main.pdf
+all: main.pdf handout.pdf
 
 main.pdf:
 	TEXINPUTS=.//: $(CC) $(OPTIONS) $(SRCDIR)/$(TARGET)
-	# $(CC) $(OPTIONS) $(SRCDIR)/$(TARGET)
 
 handout.pdf:
-	$(CC) $(OPTIONS) $(TARGET_HANDOUT)
+	TEXINPUTS=.//: $(CC) $(OPTIONS) $(SRCDIR)/$(TARGET_HANDOUT)
 
 fresh: clean all
 
