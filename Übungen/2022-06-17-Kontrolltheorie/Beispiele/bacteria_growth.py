@@ -43,32 +43,33 @@ class Petri_Dish:
         self.__n_bacteria_current -= n_bacteria
 
 
-disch_volume = 1.0E8# The volume of the petri-dish in µm^3
-bacteria_volume = 2.0E-6#The volume of the bacteria in µm^3
-init_n_bacteria = 1E6# Initial bacteria in the Dish: no units
-init_food = 1.0E8# Initial food in the dish: in
-growth_rate = 0.1# How fast are cells reproducing (also how fast can they eat the food): in 1/s
-death_rate = 1E-1# How much % of cells are dying iteratively: in 1/s
+if __name__ == "__main__":
+    disch_volume = 1.0E8# The volume of the petri-dish in µm^3
+    bacteria_volume = 2.0E-6#The volume of the bacteria in µm^3
+    init_n_bacteria = 1E6# Initial bacteria in the Dish: no units
+    init_food = 1.0E8# Initial food in the dish: in
+    growth_rate = 0.1# How fast are cells reproducing (also how fast can they eat the food): in 1/s
+    death_rate = 1E-1# How much % of cells are dying iteratively: in 1/s
 
-pd = Petri_Dish(disch_volume, bacteria_volume, init_n_bacteria, growth_rate, death_rate, init_food)
+    pd = Petri_Dish(disch_volume, bacteria_volume, init_n_bacteria, growth_rate, death_rate, init_food)
 
-bacteria = []
-food = []
-for i in range(0,80):
-    pd.advance()
-    bac = pd.how_much_bacteria()
-    fod = pd.how_much_current_food()
-    bacteria.append(bac)
-    food.append(fod)
-    
+    bacteria = []
+    food = []
+    for i in range(0,80):
+        pd.advance()
+        bac = pd.how_much_bacteria()
+        fod = pd.how_much_current_food()
+        bacteria.append(bac)
+        food.append(fod)
+        
 
-fig, ax1 = plt.subplots()
-ax2 = ax1.twinx()
-ax1.plot(bacteria, color="blue", label="Bacteria")
-ax1.set_ylabel("#Bacteria")
-ax2.plot(food, color="green", linestyle="--", label="Food")
-ax2.set_ylabel("Food")
-ax1.set_title("Bacteria Growth and Food in the Disch")
-ax1.set_xlabel("Time")
-fig.legend()
-plt.show()
+    fig, ax1 = plt.subplots()
+    ax2 = ax1.twinx()
+    ax1.plot(bacteria, color="blue", label="Bacteria")
+    ax1.set_ylabel("#Bacteria")
+    ax2.plot(food, color="green", linestyle="--", label="Food")
+    ax2.set_ylabel("Food")
+    ax1.set_title("Bacteria Growth and Food in the Disch")
+    ax1.set_xlabel("Time")
+    fig.legend()
+    plt.show()
