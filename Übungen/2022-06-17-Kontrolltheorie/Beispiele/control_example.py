@@ -41,9 +41,9 @@ if __name__ == "__main__":
     death_rate = 1E-1# How much % of cells are dying iteratively: in 1/s
 
     setpoint = 4e6
-    K_p = 1.0e1
-    K_i = 1.0e-4
-    K_d = 1.0e-6
+    K_p = 3.0e-4
+    K_i = 5.0e-8
+    K_d = 0.0e-7
 
     pd = Petri_Dish(disch_volume, bacteria_volume, init_n_bacteria, growth_rate, death_rate, init_food)
     cont = Controller(K_p, K_i, K_d, setpoint)
@@ -51,20 +51,17 @@ if __name__ == "__main__":
     bacteria = []
     food = []
 
-    add_food = 0.0
+    add_food = 1.0e5
 
-    for i in range(0,350):
+    for i in range(0,2000):
         pd.advance()
         bac = pd.how_much_bacteria()
         fod = pd.how_much_current_food()
 
         # Now comes the controller part
-        add_food = max(add_food + cont.response(current_value=bac, dt=1.0), 0.0)
+        add_food += cont.response(current_value=bac, dt=1.0)
         
-        pd.provide_food(add_food)
-        # else:
-        #     pd.take_bacteria_sample(-response)
-        print(add_food)
+        pd.provide_food(max(add_food, 0.0))
         
         bacteria.append(bac)
         food.append(fod)
