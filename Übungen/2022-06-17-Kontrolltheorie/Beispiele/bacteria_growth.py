@@ -24,7 +24,7 @@ class Petri_Dish:
     def provide_food(self, food: float):
         if self.__current_food + food < 0.0:
             raise ValueError("Cannot provide negative food such that negative result occurs.")
-        self.__curent_food += food
+        self.__current_food += food
     
     def how_much_current_food(self):
         return self.__current_food
