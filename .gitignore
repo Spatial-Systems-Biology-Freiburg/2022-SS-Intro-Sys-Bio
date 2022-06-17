@@ -9,4 +9,6 @@
 *.nav
 *.vrb
 *.pdf
+*.bbl
+*.blg
 _minted*
