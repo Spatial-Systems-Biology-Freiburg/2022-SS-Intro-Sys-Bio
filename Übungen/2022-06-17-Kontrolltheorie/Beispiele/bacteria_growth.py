@@ -17,7 +17,6 @@ class Petri_Dish:
         dbacteria_growth *= (self.__current_food/(self.__n_bacteria_current+1))
         dbacteria_growth *= (np.random.uniform(0, 1.0, 1))[0]
         dbacteria_death = self.__death_rate * self.__n_bacteria_current*np.random.uniform(0, 1.0, 1)[0]
-        print(dbacteria_growth, dbacteria_death, dbacteria_growth-dbacteria_death)
 
         self.__current_food = max(self.__current_food - dt*dbacteria_growth, 0.0)
         self.__n_bacteria_current = max(self.__n_bacteria_current + dt* (dbacteria_growth - dbacteria_death), 0.0)
