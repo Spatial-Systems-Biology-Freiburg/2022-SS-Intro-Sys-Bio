@@ -12,7 +12,7 @@ class Petri_Dish:
         self.__growth_rate = growth_rate
         self.__death_rate = death_rate
     
-    def advance(self, dt: float):
+    def advance(self, dt: float=1.0):
         dbacteria_growth = self.__growth_rate * self.__n_bacteria_current * (1 - self.__n_bacteria_current/self.__n_max)
         dbacteria_growth *= (self.__current_food/(self.__n_bacteria_current+1))
         dbacteria_growth *= (np.random.uniform(0, 1.0, 1))[0]
@@ -55,8 +55,8 @@ pd = Petri_Dish(disch_volume, bacteria_volume, init_n_bacteria, growth_rate, dea
 
 bacteria = []
 food = []
-for i in range(0,20):
-    pd.advance(1)
+for i in range(0,80):
+    pd.advance()
     bac = pd.how_much_bacteria()
     fod = pd.how_much_current_food()
     bacteria.append(bac)
