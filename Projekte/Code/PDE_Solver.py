@@ -69,9 +69,6 @@ class PDE_Solver:
         return self.__reducer*values + boundary_values*(np.ones(values.shape) - self.__reducer)
 
     def pde_rhs_dirichlet(self, X, t):
-        print(self.diffusion_matrices_y.shape)
-        print(X.shape)
-        
         return self.__reducer*(
             # Diffusion in x and y direction
             np.einsum('akc,abk->abc', X, self.diffusion_matrices_x) +
@@ -80,7 +77,7 @@ class PDE_Solver:
         )
 
     def pde_rhs_neumann(self, X, t):
-        return self.__reducer*(
+        return (
             # Diffusion in x and y direction
             np.einsum('akc,abk->abc', X, self.diffusion_matrices_x) +
             np.einsum('abk,akc->abc', X, self.diffusion_matrices_y) +
@@ -99,7 +96,7 @@ class PDE_Solver:
 
 
 if __name__ == "__main__":
-    initial_values = np.random.uniform(low=2.0, high= 10.0, size=(2, 10, 20))
+    initial_values = np.random.uniform(low=2.0, high= 10.0, size=(2, 30, 30))
 
     pde_solv = PDE_Solver(
         dx=20.0,
@@ -108,9 +105,10 @@ if __name__ == "__main__":
         boundary_type="neumann",
         boundary_values=0.0,
         diffusion_constants=np.array([100.0, 5000.0]),
-        kinetics=ODE)
+        kinetics=ODE
+    )
     
-    res = pde_solv.solve_pde(np.linspace(0, 3e-00))
+    res = pde_solv.solve_pde(np.linspace(0, 3e-01))
     print(np.average(res, axis=(2, 3)))
     plt.imshow(res[5,0,:,:], cmap='viridis', interpolation='spline36')
     plt.show()
