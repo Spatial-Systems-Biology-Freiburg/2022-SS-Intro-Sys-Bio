@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from dataclasses import dataclass
 import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
