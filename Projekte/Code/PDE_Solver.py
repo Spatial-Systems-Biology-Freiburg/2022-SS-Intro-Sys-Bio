@@ -115,8 +115,9 @@ class PDE_Solver:
 
 
 
-def save_result_plot(i, res, index, min, max, start_time, output_folder=Path("./out/")):
-    print("[{: >8.4f}s] Saving Plots ...".format(time.time()-start_time), end="\r")
+def save_result_plot(i, res, index, min, max, start_time=None, output_folder=Path("./out/")):
+    if start_time!=None:
+        print("[{: >8.4f}s] Saving Plots ...".format(time.time()-start_time), end="\r")
     fig, ax = plt.subplots()
     im = ax.imshow(
         res[i,index,:,:],
