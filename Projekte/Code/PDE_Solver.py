@@ -56,13 +56,21 @@ class PDE_Solver:
         for i in range(0, diffusion_matrix.shape[1]):
             for j in range(0, diffusion_matrix.shape[2]):
                 if i==j-1 or i==j+1:
-                    diffusion_matrix[:, i, j] = r
+                    if i==0 or i==diffusion_matrix.shape[1]-1:
+                        if self.boundary_type == "dirichlet":
+                            diffusion_matrix[:, i, j] = 0.0    
+                        elif self.boundary_type == "neumann":
+                            diffusion_matrix[:, i, j] = r
+                    else:
+                        diffusion_matrix[:, i, j] = r
                 if i==j:
                     if i==0 or i==diffusion_matrix.shape[1]-1:
                         if self.boundary_type == "dirichlet":
-                            diffusion_matrix[:, i, j] = - 2.0*r
+                            diffusion_matrix[:, i, j] = 0.0
                         elif self.boundary_type == "neumann":
                             diffusion_matrix[:, i, j] = - 1.0*r
+                    else:
+                        diffusion_matrix[:, i, j] = - 2.0*r
         return diffusion_matrix
 
     def apply_dirichlet_boundary_conditions(self, values, boundary_values):
