@@ -18,16 +18,26 @@ def ODE(X, t):
 
 class PDE_Solver:
     def __init__(self, dx: float, dy: float, initial_values: np.array, boundary_type: str, boundary_values, diffusion_constants: np.array, kinetics: callable):
+        # Used for nice display when solving
+        self.start_time = time.time()
+
+        # Variables for the cartesian Mesh domain
         self.dx = dx
         self.dy = dy
         self.__values = initial_values
         
-        # We will later use this matrix when calcualting the kinetics part
+        # We will later use this matrix to omit certain other terms
         self.__reducer = np.ones(initial_values.shape)
         self.__reducer[:,0,:] = 0.0
         self.__reducer[:,-1,:] = 0.0
         self.__reducer[:,:,0] = 0.0
         self.__reducer[:,:,-1] = 0.0
+        self.__reducer_x = self.__reducer
+        self.__reducer_y = self.__reducer
+        self.__reducer_x[:,:,0] = 0.0
+        self.__reducer_x[:,:,-1] = 0.0
+        self.__reducer_y[:,0,:] = 0.0
+        self.__reducer_y[:,-1,:] = 0.0
 
         self.__values_shape = initial_values.shape
         self.boundary_type = boundary_type
@@ -45,11 +55,10 @@ class PDE_Solver:
 
         self.diffusion_matrices_x = self.__initialize_diffusion_matrix(self.diffusion_matrices_x, self.r_x, boundary_type=boundary_type)
         self.diffusion_matrices_y = self.__initialize_diffusion_matrix(self.diffusion_matrices_y, self.r_y, boundary_type=boundary_type)
+        print("[{: >8.4f}s] Initialization Done".format(time.time()-self.start_time))
 
         if self.boundary_type == "dirichlet":
             self.__values = self.apply_dirichlet_boundary_conditions(self.__values, boundary_values)
-        # elif self.boundary_type == "neumann":
-        #     self.__values = self.apply_dirichlet_boundary_conditions(self.__values, boundary_values)
 
     def __initialize_diffusion_matrix(self, diffusion_matrix, r, boundary_type: str):
         for i in range(0, diffusion_matrix.shape[1]):
@@ -75,7 +84,9 @@ class PDE_Solver:
     def apply_dirichlet_boundary_conditions(self, values, boundary_values):
         return self.__reducer*values + boundary_values*(np.ones(values.shape) - self.__reducer)
 
+    # TODO this still needs verification that it works correctly
     def pde_rhs_dirichlet(self, X, t):
+        print("[{: >8.4f}s] Solving ...".format(time.time()-self.start_pde_solve_time), end="\r")
         return self.__reducer*(
             # Diffusion in x and y direction
             np.einsum('akc,abk->abc', X, self.diffusion_matrices_x) +
@@ -83,23 +94,29 @@ class PDE_Solver:
             self.kinetics(X, t)
         )
 
+    # TODO this still needs verification that it works correctly
     def pde_rhs_neumann(self, X, t):
+        print("[{: >8.4f}s] Solving ...".format(time.time()-self.start_pde_solve_time), end="\r")
         return (
             # Diffusion in x and y direction
             np.einsum('akc,abk->abc', X, self.diffusion_matrices_x) +
             np.einsum('abk,akc->abc', X, self.diffusion_matrices_y) +
-            self.boundary_values +
+            self.__reducer_x / self.dx * self.boundary_values +
+            self.__reducer_y / self.dy * self.boundary_values +
             self.kinetics(X, t)
         )
 
     def ode_rhs_wrapper(self, Y, t, func):
-        return self.pde_rhs_dirichlet(Y.reshape(self.__values_shape), t).flatten()
+        return func(Y.reshape(self.__values_shape), t).flatten()
 
     def solve_pde(self, times):
+        self.start_pde_solve_time = time.time()
         if self.boundary_type == "dirichlet":
-            return odeint(self.ode_rhs_wrapper, self.__values.flatten(), times, args=(self.pde_rhs_dirichlet, )).reshape((len(times), )+self.__values_shape)
+            res = odeint(self.ode_rhs_wrapper, self.__values.flatten(), times, args=(self.pde_rhs_dirichlet, )).reshape((len(times), )+self.__values_shape)
         elif self.boundary_type == "neumann":
-            return odeint(self.ode_rhs_wrapper, self.__values.flatten(), times, args=(self.pde_rhs_neumann, )).reshape((len(times), )+self.__values_shape)
+            res = odeint(self.ode_rhs_wrapper, self.__values.flatten(), times, args=(self.pde_rhs_neumann, )).reshape((len(times), )+self.__values_shape)
+        print("[{: >8.4f}s] Solving Done".format(time.time()-self.start_pde_solve_time))
+        return res
 
 
 if __name__ == "__main__":
