@@ -3,17 +3,12 @@
 import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
-
-
-k1 = 10.0
-k2 = 0.1
-k3 = 4.93e-07
-k4 = 80.0
-
-
-def ODE(X, t):
-    (A, B) = X
-    return (k1 - k2*A + k3*A**2*B, k4 - k3*A**2*B)
+import multiprocessing as mp
+import itertools as it
+from pathlib import Path
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import os
+import time
 
 
 class PDE_Solver:
@@ -119,20 +114,36 @@ class PDE_Solver:
         return res
 
 
-if __name__ == "__main__":
-    initial_values = np.random.uniform(low=2.0, high= 10.0, size=(2, 30, 30))
 
-    pde_solv = PDE_Solver(
-        dx=20.0,
-        dy=20.0,
-        initial_values=initial_values,
-        boundary_type="neumann",
-        boundary_values=0.0,
-        diffusion_constants=np.array([100.0, 5000.0]),
-        kinetics=ODE
+def save_result_plot(i, res, index, min, max, start_time, output_folder=Path("./out/")):
+    print("[{: >8.4f}s] Saving Plots ...".format(time.time()-start_time), end="\r")
+    fig, ax = plt.subplots()
+    im = ax.imshow(
+        res[i,index,:,:],
+        vmin=min[index],
+        vmax=max[index],
+        cmap='viridis',
+        interpolation='spline36'
     )
-    
-    res = pde_solv.solve_pde(np.linspace(0, 3e-01))
-    print(np.average(res, axis=(2, 3)))
-    plt.imshow(res[5,0,:,:], cmap='viridis', interpolation='spline36')
-    plt.show()
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes('right', size='5%', pad=0.05)
+    fig.colorbar(im, cax=cax, orientation='vertical')
+    fig.savefig(output_folder / "image_{:08d}.png".format(i))
+    plt.close(fig)
+
+
+def save_plots(res, index, step, threads=None, output_folder=Path("./out/")):
+    start_time = time.time()
+    if threads==None:
+        threads=os.cpu_count()
+    with mp.Pool(threads) as p:
+        p.starmap(save_result_plot, zip(
+            range(0, res.shape[0], step),
+            it.repeat(res),
+            it.repeat(index),
+            it.repeat(np.min(res, axis=(0, 2, 3))),
+            it.repeat(np.max(res, axis=(0, 2, 3))),
+            it.repeat(start_time),
+            it.repeat(output_folder)
+        ))
+    print("[{: >8.4f}s] Saved all Plots".format(time.time()-start_time))
