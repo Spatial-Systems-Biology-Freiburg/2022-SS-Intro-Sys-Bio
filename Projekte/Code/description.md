@@ -14,7 +14,18 @@ We first need to import needed modules.
 from PDE_Solver import PDE_Solver, save_result_plot, save_plots
 import numpy as np
 ```
-To use the pde solver, we first need to define intial values.
+Afterwards we define the reaction kinetics governing our system
+```python
+k1 = 10.0
+k2 = 0.1
+k3 = 4.93e-07
+k4 = 80.0
+
+def ODE(X, t):
+    (A, B) = X
+    return (k1 - k2*A + k3*A**2*B, k4 - k3*A**2*B)
+```
+To use the pde solver, we need to define initial values.
 ```python
 initial_valus = np.random.uniform(low=200.0, high=900.0, size=(2, 10, 10))
 ```
