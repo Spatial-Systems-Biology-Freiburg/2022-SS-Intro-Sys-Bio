@@ -1,4 +1,13 @@
 # PDE Solver
+## Requirements
+In order to use the provided pde solver, the user must have working installations of the following python packages.
+```python
+import numpy
+import scipy
+import matplotlib
+```
+This packages was developed with python `3.10.5`, numpy `1.22.4` and scipy `1.8.1`.
+However, we expect most versions from python `3.5` upwards to work.
 ## Usage
 We first need to import needed modules.
 ```python
