@@ -115,12 +115,12 @@ class PDE_Solver:
 
 
 
-def save_result_plot(i, res, index, min, max, start_time=None, output_folder=Path("./out/")):
+def save_result_plot(i, u, index, min, max, start_time=None, output_folder=Path("./out/")):
     if start_time!=None:
         print("[{: >8.4f}s] Saving Plots ...".format(time.time()-start_time), end="\r")
     fig, ax = plt.subplots()
     im = ax.imshow(
-        res[i,index,:,:],
+        u,
         vmin=min[index],
         vmax=max[index],
         cmap='viridis',
@@ -140,7 +140,7 @@ def save_plots(res, index, step, threads=None, output_folder=Path("./out/")):
     with mp.Pool(threads) as p:
         p.starmap(save_result_plot, zip(
             range(0, res.shape[0], step),
-            it.repeat(res),
+            [res[i,index,:,:] for i in range(0, res.shape[0], step)],
             it.repeat(index),
             it.repeat(np.min(res, axis=(0, 2, 3))),
             it.repeat(np.max(res, axis=(0, 2, 3))),
