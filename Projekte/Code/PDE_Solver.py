@@ -12,7 +12,15 @@ import time
 
 
 class PDE_Solver:
-    def __init__(self, dx: float, dy: float, initial_values: np.array, boundary_type: str, boundary_values, diffusion_constants: np.array, kinetics: callable):
+    def __init__(self,
+        dx: float,
+        dy: float,
+        initial_values: np.array,
+        boundary_type: str,
+        boundary_values,
+        diffusion_constants: np.array,
+        kinetics: callable
+    ):
         # Used for nice display when solving
         self.start_time = time.time()
 
@@ -38,68 +46,64 @@ class PDE_Solver:
         self.boundary_type = boundary_type
         self.boundary_values = (np.ones(self.__values_shape) - self.__reducer) * boundary_values
         self.kinetics = kinetics
+        self.dX = np.zeros(initial_values.shape)
         if len(initial_values.shape) != 3:
             raise ValueError("The initial values need to be of shape (n_chem, n_x, n_y)")
         if initial_values.shape[0] != diffusion_constants.shape[0]:
             raise ValueError("The number of provided diffusion constants has to coincide with the number of chemicals in the system.")
-        self.diffusion_matrices_x = np.zeros((initial_values.shape[0], initial_values.shape[1], initial_values.shape[1]))
-        self.diffusion_matrices_y = np.zeros((initial_values.shape[0], initial_values.shape[2], initial_values.shape[2]))
 
-        self.r_x = diffusion_constants/self.dx**2
-        self.r_y = diffusion_constants/self.dy**2
-
-        self.diffusion_matrices_x = self.__initialize_diffusion_matrix(self.diffusion_matrices_x, self.r_x, boundary_type=boundary_type)
-        self.diffusion_matrices_y = self.__initialize_diffusion_matrix(self.diffusion_matrices_y, self.r_y, boundary_type=boundary_type)
-        print("[{: >8.4f}s] Initialization Done".format(time.time()-self.start_time))
+        self.r_x = diffusion_constants[:,np.newaxis, np.newaxis]/self.dx**2
+        self.r_y = diffusion_constants[:,np.newaxis, np.newaxis]/self.dy**2
 
         if self.boundary_type == "dirichlet":
             self.__values = self.apply_dirichlet_boundary_conditions(self.__values, boundary_values)
 
-    def __initialize_diffusion_matrix(self, diffusion_matrix, r, boundary_type: str):
-        for i in range(0, diffusion_matrix.shape[1]):
-            for j in range(0, diffusion_matrix.shape[2]):
-                if i==j-1 or i==j+1:
-                    if i==0 or i==diffusion_matrix.shape[1]-1:
-                        if self.boundary_type == "dirichlet":
-                            diffusion_matrix[:, i, j] = 0.0    
-                        elif self.boundary_type == "neumann":
-                            diffusion_matrix[:, i, j] = r
-                    else:
-                        diffusion_matrix[:, i, j] = r
-                if i==j:
-                    if i==0 or i==diffusion_matrix.shape[1]-1:
-                        if self.boundary_type == "dirichlet":
-                            diffusion_matrix[:, i, j] = 0.0
-                        elif self.boundary_type == "neumann":
-                            diffusion_matrix[:, i, j] = - 1.0*r
-                    else:
-                        diffusion_matrix[:, i, j] = - 2.0*r
-        return diffusion_matrix
+        print("[{: >8.4f}s] Initialization Done".format(time.time()-self.start_time))
 
     def apply_dirichlet_boundary_conditions(self, values, boundary_values):
         return self.__reducer*values + boundary_values*(np.ones(values.shape) - self.__reducer)
 
-    # TODO this still needs verification that it works correctly
-    def pde_rhs_dirichlet(self, X, t):
-        print("[{: >8.4f}s] Solving ...".format(time.time()-self.start_pde_solve_time), end="\r")
-        return self.__reducer*(
-            # Diffusion in x and y direction
-            np.einsum('akc,abk->abc', X, self.diffusion_matrices_x) +
-            np.einsum('abk,akc->abc', X, self.diffusion_matrices_y) +
-            self.kinetics(X, t)
+    def diffuse_dirichlet(self, X, t):
+        self.dX *= 0.0
+        self.dX[:,1:-1,1:-1] = (
+            self.r_x * (X[:,0:-2,1:-1] + X[:,2:,1:-1] - 2.0*X[:,1:-1,1:-1]) +
+            self.r_y * (X[:,1:-1,0:-2] + X[:,1:-1,2:] - 2.0*X[:,1:-1,1:-1])
         )
+        self.dX += self.boundary_values
+        return self.dX
 
-    # TODO this still needs verification that it works correctly
+    def diffuse_neumann(self, X, t):
+        self.dX *= 0.0
+        self.dX[:,1:-1,1:-1] = (
+            self.r_x * (X[:,0:-2,1:-1] + X[:,2:,1:-1] - 2.0*X[:,1:-1,1:-1]) +
+            self.r_y * (X[:,1:-1,0:-2] + X[:,1:-1,2:] - 2.0*X[:,1:-1,1:-1])
+        )
+        self.dX[:,0,1:-1] = (
+            self.r_x[:,0,:] * (X[:,1,1:-1] - 1.0*X[:,0,1:-1]) +
+            self.r_y[:,:,0] * (X[:,0,2:] + X[:,0,0:-2] - 2.0*X[:,0,1:-1])
+        )
+        self.dX[:,-1,1:-1] = (
+            self.r_x[:,-1,:] * (X[:,-2,1:-1] - 1.0*X[:,-1,1:-1]) +
+            self.r_y[:,:,-1] * (X[:,-1,0:-2] + X[:,-1,2:] - 2.0*X[:,-1,1:-1])
+        )
+        self.dX[:,1:-1,0] = (
+            self.r_y[:,:,0] * (X[:,1:-1,1] - 1.0*X[:,1:-1,0]) +
+            self.r_x[:,:,0] * (X[:,0:-2,0] + X[:,2:,0] - 2.0*X[:,1:-1,0])
+        )
+        self.dX[:,1:-1,-1] = (
+            self.r_y[:,:,-1] * (X[:,1:-1,-2] - 1.0*X[:,1:-1,-1]) +
+            self.r_x[:,:,-1] * (X[:,0:-2,-1] + X[:,2:,-1] - 2.0*X[:,1:-1,-1])
+        )
+        self.dX += self.boundary_values
+        return self.dX
+    
     def pde_rhs_neumann(self, X, t):
         print("[{: >8.4f}s] Solving ...".format(time.time()-self.start_pde_solve_time), end="\r")
-        return (
-            # Diffusion in x and y direction
-            np.einsum('akc,abk->abc', X, self.diffusion_matrices_x) +
-            np.einsum('abk,akc->abc', X, self.diffusion_matrices_y) +
-            self.__reducer_x / self.dx * self.boundary_values +
-            self.__reducer_y / self.dy * self.boundary_values +
-            self.kinetics(X, t)
-        )
+        return self.diffuse_neumann(X, t) + self.kinetics(X, t)
+    
+    def pde_rhs_dirichlet(self, X, t):
+        print("[{: >8.4f}s] Solving ...".format(time.time()-self.start_pde_solve_time), end="\r")
+        return self.diffuse_dirichlet(X, t) + self.kinetics(X, t)
 
     def ode_rhs_wrapper(self, Y, t, func):
         return func(Y.reshape(self.__values_shape), t).flatten()
