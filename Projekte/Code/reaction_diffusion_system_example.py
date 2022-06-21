@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-from PDE_Solver import PDE_Solver, save_result_plot, save_plots
+from PDE_Solver import PDE_Solver, solve_pde, save_plots
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 k1 = 10.0
@@ -38,25 +39,32 @@ def full_model(X, t):
 
 if __name__ == "__main__":
     # initial_values = np.random.uniform(low=200.0, high= 900.0, size=(2, 10, 10))
-    initial_values = np.zeros((7, 30, 30))
+    initial_values = np.zeros((7, 15, 15))
     initial_values += 900.0
     for i in range(1, 9):
         initial_values[:,i,i] = 950.0
         initial_values[:,9-i,i] = 950.0
 
-    pde_solv = PDE_Solver(
-        dx=40.0,
-        dy=40.0,
-        initial_values=initial_values,
-        boundary_type="neumann",
-        boundary_values=0.0,
-        diffusion_constants=np.array([50, 0, 0, 100, 5000, 0, 0]),
-        kinetics=full_model
-    )
+    dx = 40.0
+    dy = 40.0
+    boundary_values=0.0
+    diffusion_constants=np.array([
+        k[1]*k[3],
+        0,
+        0,
+        k[15]*k[16],
+        k[18]*k[19],
+        0,
+        0
+    ])
+    times = np.arange(0, 7200, 0.1)
 
-    res = pde_solv.solve_pde(np.arange(0, 7200, 0.1))
+    res = solve_pde(initial_values, times, dx, dy, "neumann", boundary_values, diffusion_constants, kinetics=full_model)
 
     # Every n_th result is saved as a picture
     step = 500
     index = 0
     save_plots(res, index, step)
+
+    plt.imshow(res[-1,0,:,:])
+    plt.show()
