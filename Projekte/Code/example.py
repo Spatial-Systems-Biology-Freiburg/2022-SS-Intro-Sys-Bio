@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
-from pde_functions import *
-from pde_int import *
+from pde_functions import jpat, full_model
+from pde_int import couplingMatrix, IJKth
+from save_results import save_plots
 from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def random_initialiser(xmax, ymax, NVar):
@@ -11,10 +13,11 @@ def random_initialiser(xmax, ymax, NVar):
 
 
 if __name__ == "__main__":
-    xmax=15
-    ymax=15
+    xmax=10
+    ymax=10
     NVar=7
-    t_span = (0, 10000)
+    t_span = (0, 1000)
+    t_num = 50
     y0 = random_initialiser(xmax, ymax, NVar)
     bndcondition="zeroflux"
     celltype="quadratic"
@@ -25,7 +28,7 @@ if __name__ == "__main__":
         0.5131, 0.8396, 7.8041, 1.3647
     ]
 
-    t_eval = np.linspace(t_span[0], t_span[1], 100)
+    t_eval = np.linspace(t_span[0], t_span[1], t_num)
 
     D=couplingMatrix(xmax, ymax, bndcondition, celltype)
     ind = IJKth(1, np.arange(ymax), np.arange(xmax), ymax, NVar)
@@ -42,5 +45,6 @@ if __name__ == "__main__":
     )
     res = sol.y.reshape((xmax, ymax, NVar, len(t_eval)))
 
-    plt.imshow(res[:,:,0,-1])
-    plt.show()
+    component_index = 1
+    step = 1
+    save_plots(res, component_index, step)
