@@ -6,6 +6,7 @@ from save_results import save_plots
 from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 import numpy as np
+import time
 
 
 def random_initialiser(xmax, ymax, NVar):
@@ -33,7 +34,8 @@ if __name__ == "__main__":
     D=couplingMatrix(xmax, ymax, bndcondition, celltype)
     ind = IJKth(1, np.arange(ymax), np.arange(xmax), ymax, NVar)
 
-
+    start_time = time.time()
+    print("[{: >8.4f}] Solving ...".format(0), end="\r")
     sol = solve_ivp(
         lambda t, y: full_model(t, y, D, ind, k),
         t_span,
@@ -44,6 +46,7 @@ if __name__ == "__main__":
         t_eval=t_eval
     )
     res = sol.y.reshape((xmax, ymax, NVar, len(t_eval)))
+    print("[{: >8.4f}s] Solving Done".format(time.time()-start_time))
 
     component_index = 1
     step = 1
