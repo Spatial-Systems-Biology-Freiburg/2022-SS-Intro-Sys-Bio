@@ -19,9 +19,11 @@ if __name__ == "__main__":
     bndcondition="zeroflux"
     celltype="quadratic"
 
-    k = r_[0.5982, 0.1405, 2.1971, 1.1245, 0.2916, 2.3028, 0.3466, 1.7822, 0.3976, 9.9829,\
-                       1.2590, 2.6202, 1.5731, 5.2625, 4.8758, 0.3196, 0.1465, 2.1453, 0.5396, 56.0520,\
-                       0.5131, 0.8396, 7.8041, 1.3647]
+    k = [
+        0.5982, 0.1405, 2.1971, 1.1245, 0.2916, 2.3028, 0.3466, 1.7822, 0.3976, 9.9829,
+        1.2590, 2.6202, 1.5731, 5.2625, 4.8758, 0.3196, 0.1465, 2.1453, 0.5396, 56.0520,
+        0.5131, 0.8396, 7.8041, 1.3647
+    ]
 
     t_eval = np.linspace(t_span[0], t_span[1], 100)
 
@@ -38,7 +40,7 @@ if __name__ == "__main__":
         vectorized=True,
         t_eval=t_eval
     )
-    print(sol.y.shape)
-    y_new = sol.y.reshape((xmax, ymax, NVar, len(t_eval)))
-    plt.imshow(y_new[:,:,0,-1])
+    res = sol.y.reshape((xmax, ymax, NVar, len(t_eval)))
+
+    plt.imshow(res[:,:,0,-1])
     plt.show()
