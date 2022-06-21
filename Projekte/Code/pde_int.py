@@ -21,9 +21,10 @@ def couplingMatrix(xmax=1,ymax=1,bndcondition="zeroflux",celltype="quadratic"):
 		bflag=0
 	else:
 		print("Unknown boundary condition!")
-	return cmatrix(ymax,xmax,ysten,xsten,bflag,1)
-	
-def cmatrix(ymax,xmax,ysten,xsten,bflag,cflag):
+	return __cmatrix(ymax,xmax,ysten,xsten,bflag,1)
+
+
+def __cmatrix(ymax,xmax,ysten,xsten,bflag,cflag):
 	n=ymax*xmax
 	D=np.zeros((n,n))
 	idx=np.reshape(np.arange(n),(ymax,xmax), order='F')
