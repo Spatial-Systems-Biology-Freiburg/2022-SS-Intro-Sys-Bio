@@ -16,35 +16,51 @@ import numpy as np
 ```
 Afterwards we define the reaction kinetics governing our system
 ```python
-k1 = 10.0
-k2 = 0.1
-k3 = 4.93e-07
-k4 = 80.0
+def ODE(t, y, D, ind, k):
+    dydt = np.zeros(y.shape)
+    A = y[ind+0]
+    B = y[ind+1]
+    dydt[ind]   = k[0] - k[1]*A + k[2]*A**2*B   + k[3]*np.dot(D,A)
+    dydt[ind+1] = k[4] - k[2]*A**2*B            + k[5]*np.dot(D,B)
+    return dydt
+```
+To use the pde solver, we need to define grid size, #components, lower and upper bound for time interval, number of time steps, initial values, type of boundary conditions, grid-type and kinetics parameters
+```python
+xmax=20
+ymax=20
+NVar=2
+t_span = (0, 100)
+t_num = 500
+y0 = np.random.uniform(low=600, high=1000, size=xmax*ymax*NVar)
+bndcondition="zeroflux"
+celltype="quadratic"
 
-def ODE(X, t):
-    (A, B) = X
-    return (k1 - k2*A + k3*A**2*B, k4 - k3*A**2*B)
+k = [
+	10.0, 0.1, 4.83e-07, 100.0/40**2,
+	80.0, 5000.0/40**2
+]
 ```
-To use the pde solver, we need to define initial values.
+Now we need some helper variables such as time points to solve for, coupling matrix and index generator.
 ```python
-initial_valus = np.random.uniform(low=200.0, high=900.0, size=(2, 10, 10))
+t_eval = np.linspace(t_span[0], t_span[1], t_num)
+D=couplingMatrix(xmax, ymax, bndcondition, celltype)
+ind = IJKth(1, np.arange(ymax), np.arange(xmax), ymax, NVar)
 ```
-Next, we initialize the solver and supply every information needed to obtain results.
+Now we can solve the equations
 ```python
-pde_solv = PDE_Solver(
-	dx=40.0,
-	dy=40.0,
-	initial_values=initial_values,
-	boundary_type="neumann",
-	boundary_values=0.0,
-	diffusion_constants=np.array([100.0, 5000.0]),
-	kinetics=ODE
+start_time = time.time()
+print("[{: >8.4f}] Solving ...".format(0), end="\r")
+sol = solve_ivp(
+	lambda t, y: ODE(t, y, D, ind, k),
+	t_span,
+	y0,
+	method='Radau',
+	jac_sparsity=jpat(D,ind),
+	vectorized=True,
+	t_eval=t_eval
 )
-```
-Now we can solve the PDE by specifying the times, we want to obtain.
-```python
-times = np.arange(0, 7200, 0.1)
-res = pde_solv.solve_pde(times)
+res = sol.y.reshape((xmax, ymax, NVar, len(t_eval)))
+print("[{: >8.4f}s] Solving Done".format(time.time()-start_time))
 ```
 We can save plots by using the predefined method(s)
 ```python
@@ -53,9 +69,9 @@ We can save plots by using the predefined method(s)
 save_result_plot(i, res, index, min, max, start_time=None, output_folder=Path("./out/"))
 
 # This will save every n_th result as a picture (by default in "./out/")
-step = 500
-index = 0
-save_plots(res, index, step)
+component_index = 0
+step = 5
+save_plots(res, component_index, step)
 ```
 ## Generating Movies
 The resulting images are stored (by default) in the `"./out/"` folder.
