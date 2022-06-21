@@ -1,5 +1,4 @@
 from scipy import sparse
-from scipy import *
 import numpy as np
 
 def jpat(D,ind):
