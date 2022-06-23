@@ -1,18 +1,18 @@
 \section{Introduction}
 In this project you will be working on modelling patterning in the trichome system.
 Trichomes are small hairs found on top of the leaves of plants.
-The pattern they form can be described by reaction-diffusion models, which you will be applying in this project as well.
+The pattern formation can be understood using a reaction diffusion model, which you will apply in this project.
 One of the proteins involved in patterning plays a unique role: it is capable of trapping other proteins in the nucleus or transporting them to the cytoplasm.
-The question is what role this plays in the formation of patterns.
+The question is how does this affect the formation of the trichome pattern?
 %
 %
 \section{Reading the Paper}
 \exercise{Questions - Introduction}
 Carefully read the supplied paper~\cite{Pesch2013}.
-Then answer the following questions.
+Then answer the following questions:
 \begin{enumerate}
-    \item Make an overview of all genes involved in the pattern forming process.
-    \item What roles do they play? (ie. how do they influence the pattern?)
+    \item Which genes are involved in the pattern forming process.
+    \item What is their specific role?
     \item Which genes are activator/inhibitor?
     \item Describe how they interact with each other?
     \item Which simplifications could be possible in this system?
@@ -20,26 +20,21 @@ Then answer the following questions.
 %
 %
 \exercise{Questions - Results - Interactions with AtMYC1}
-Answer the following questions.
+Answer the following questions:
 \begin{enumerate}
     \item With which proteins does MYC1 interact?
-    \item In which parts of the cell are MYC1 and the previously found proteins localized? (Figure 4,7)
-    \item How does this affect possible modeling of the system?
+    \item In which parts of the cell are MYC1 and its reaction partners localized? (Figure 4,7)~\ref{Pesch2013}
+    \item How does this localization affect possible modeling of the system?
 \end{enumerate}
 %
 %
 \exercise{Questions - Discussion}
-The discussion leaves some open ends for future work.
+The discussion of~\cite{Pesch2013} mentions some open points for future work.
 \begin{enumerate}
     \item What predictions are made?
     How can we test them with a model?
     \item Figure 8 describes a model hypothesized by the authors.
-    \begin{enumerate}
-        \item How can we implement this model?
-        \item What is the corresponding reaction network?
-        \item What simplifications were applied?
-        \item Which parameters do we need to supply?
-    \end{enumerate}
+    What simplifications were applied?
 \end{enumerate}
 %
 %
@@ -50,6 +45,7 @@ The discussion leaves some open ends for future work.
     \item What type of interactions are occuring (Figure 8, Arrows)?
     \item To simplify the system: Which components could you merge into a single classification?
     \item Draw the simplified network.
+    Which parameters do we need to supply?
     \item Set up the reaction equations.
     Pay attention to cellular compartments.
     How can this be represented on a \ac{pde} level?
@@ -72,11 +68,14 @@ Use the following parameters: $D=1.0,\lambda=2.0,\alpha=1.0,L=1.0$ with Dirichle
 %
 %
 \exercise{Modeling Trichome Patterning}
-Now you will implement the previously derived equations of the trichome patterning system in this \ac{pde} solver.
+Now you will implement the previously derived equations of the trichome patterning system in the supplied solver.
+Points on the mesh coincide with cell locations and are coupled by plasmodesmata.
+This way, we have a diffusion-like system described by coupled~\acp{ode}.
 \begin{enumerate}
     \item First neglect spatial transport phenomena and concentrate on the resulting \acp{ode}
     \item Numerically determine if they have a steady-state
-    \item How would initial values of the full \ac{pde} system now be chosen?
+    \item Which role do the initial values of the system play?
+    Which initial values need to be chosen for the simulation of the turing pattern?
     \item Implement the correct equations and solve the system.
     \item What patterns emerge when repeating the same simulation?
     \item What technical challenges are you facing?
@@ -88,17 +87,17 @@ The used parameters up to this time were only an educated first guess.
 In order to determine other working parameter sets, we want to explore the possible space of values.
 The next steps are
 \begin{enumerate}
-    \item Generate new parameter combinations
-    \item Filter them based on stability analysis criteria
-    \item Simulate the remaining ones
-    \item Extract features that determine if a pattern was generated
-    \item If a pattern was generated successfully, save it, otherwise discard it
-    \item Test your results on a case-by-case basis
+    \item[Ex.  7] Generate new parameter combinations
+    \item[Ex.  8] Filter them based on stability analysis criteria
+    \item[Ex.  9] Simulate the remaining ones
+    \item[Ex. 10] Extract features that determine if a pattern was generated
+    \item[] If a pattern was generated successfully, save it, otherwise discard it
+    \item[] Test your results on a case-by-case basis
 \end{enumerate}
 %
 %
 \exercise{Sampling Algorithm}
-To generate parameter pairs, use Latin-Hypercube Sampling to generate new values $q_i$ and then generate the parameters via
+To generate parameter pairs, use Latin-Hypercube Sampling~\cite{McKay1979,wiki:Latin_hypercube_sampling} to generate new values $q_i$ and then generate the parameters via
 \begin{equation}
     p_i = 10^{q_i}
 \end{equation}
@@ -116,9 +115,22 @@ A stability analysis can be performed to reduce the number of parameter sets tha
 \begin{itemize}
     \item Why is this method important?
     \item What are the two basic stability/instability preconditions?
-    \item How does diffusion play a role?
+    \item How does diffusion-like transport play a role?
 \end{itemize}
 Use the provided function to filter the parameters.
+%
+%
+\exercise{Solving}
+Write (parallelized?) code that solves for all possible parameter combinations.
+Store the results of the simulations along with their parameters.
+The code could look like the following:
+\begin{minted}{python}
+import multiprocessing as mp
+
+N_parallel = 4
+p = mp.pool(N_parallel)
+p.starmap(generate_result, parameter_combinations)
+\end{minted}
 %
 %
 \exercise{Feature Extraction}
@@ -129,18 +141,18 @@ The wildtype behaviour never shows two or more trichomes next to each other.
     \item Select cells which have more than $0.5$ of maximum activator concentration.
     These are designated as trichome cells.
     \item If two neighboring cells show this property, we neglect the result.
-    \item Consider, storing the valid parameter sets to a file for safety   
+    \item Consider, storing the valid parameter sets to a file in case the program/computer crashes.   
 \end{enumerate}
 %
 %
 \exercise{MYC1 Effect}
-Pick one verified parameter set and experiment with different initial values and parameter values for the trapping protein MYC1.
+Pick one verified parameter set and experiment with different initial and parameter values for the trapping protein MYC1.
 \begin{enumerate}
-    \item Define a range for the MYC1 parameter value (include $0.0$)
+    \item Define a range for the MYC1 parameter value (include $0.0$ as initial value)
     \item Solve the equation for every combination
     \item Compare the results
     \item Quantify the cluster density and density of trichomes.
-    This time we are not neglecting clusters.
+    This time do not neglect clusters.
     \item Present these results in a figure.
 \end{enumerate}
 %
@@ -148,22 +160,25 @@ Pick one verified parameter set and experiment with different initial values and
 \section{Discussion}
 We finalize the project by discussing our approach.
 \begin{enumerate}
-    \item What are you seeing? Why? (General discussion about the activator-inhibitor system)
+    \item Why are patterns formed? (General discussion about the activator-inhibitor system)
     \begin{enumerate}
         \item What role does the MYC1 play? (trapping proteins)
         \item What happens if we vary it?
         \item What happens if this is set to zero?
     \end{enumerate}
-    \item Can we predict something? How can we design an experiment to test it? (optional)
+    \item Using this model, can we predictexperimental results?
+    How can we design an experiment to test it? (optional)
     \item What are technical challenges (time-step, discretization, sampling)
     \item What are implications of simplifications? (Internal discretization/diffusion, no cell-size, boundary conditions, spatial dimension, static domain, cell division/growth)
     \item What else did you notice?
-    \item ...
 \end{enumerate}
 %
 %
 \exercise{Presentation}
-Prepare a presentation of your results in the following structure
+Prepare a presentation of your results.
+The talk is ment to last 30min.
+Every participant should contribute equally.
+Follow this structure:
 \begin{enumerate}
     \item Introduction
     \item Methods
