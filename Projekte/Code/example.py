@@ -29,7 +29,12 @@ if __name__ == "__main__":
     bndcondition="zeroflux"
     celltype="quadratic"
 
-    k = [
+    k1 = [
+        1.0, 0.1, 4.83e-06, 100.0/40**2,
+        80.0, 5000.0/40**2
+    ]
+    
+    k2 = [
         10.0, 0.1, 4.83e-07, 100.0/40**2,
         80.0, 5000.0/40**2
     ]
@@ -41,7 +46,7 @@ if __name__ == "__main__":
     start_time = time.time()
     print("[{: >8.4f}] Solving ...".format(0), end="\r")
     sol = solve_ivp(
-        lambda t, y: ODE(t, y, D, ind, k, start_time),
+        lambda t, y: ODE(t, y, D, ind, k2, start_time),
         t_span,
         y0,
         method='Radau',
