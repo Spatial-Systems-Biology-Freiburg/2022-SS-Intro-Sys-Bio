@@ -1,0 +1,45 @@
+\documentclass[10pt, compress, handout]{beamer}
+
+\usetheme{utopia}
+
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+\usepackage[outputdir=out]{minted}
+\usepackage{natbib}
+
+\usepgfplotslibrary{dateplot}
+
+\usetikzlibrary{shapes,arrows,positioning,intersections}
+\tikzstyle{block} = [rectangle, draw, fill=blue!20,
+    text width=5em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+
+
+\usemintedstyle{trac}
+
+\hypersetup{colorlinks=false}
+
+\title{Control Theory in Biology}
+\subtitle{}
+\date{15.06.2022}
+\author{Jonas Pleyer}
+\institute{Freiburg Center for Data Analysis and Modeling (FDM)}
+
+\begin{document}
+
+\maketitle
+
+\input{01-introduction}
+\input{02-biological-examples}
+\input{03-concepts}
+\input{04-revisiting-biology}
+
+\plain{Questions?}
+
+\begin{frame}{Literature}[allowframebreaks]
+    \bibliographystyle{alpha}
+    \bibliography{ControlTheory}
+\end{frame}
+% 
+%
+\end{document}
