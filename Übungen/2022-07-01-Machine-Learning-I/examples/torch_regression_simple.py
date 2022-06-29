@@ -12,7 +12,7 @@ device = torch.device("cpu")
 # By default, requires_grad=False, which indicates that we do not need to
 # compute gradients with respect to these Tensors during the backward pass.
 x = torch.linspace(-math.pi, math.pi, 2000, device=device, dtype=dtype)
-y = torch.sin(x)
+y = 0.1 + 2.0*torch.sin(x+2)
 
 # Create random Tensors for weights. For a third order polynomial, we need
 # 4 weights: y = a + b x + c x^2 + d x^3
@@ -23,10 +23,10 @@ b = torch.randn((), device=device, dtype=dtype, requires_grad=True)
 c = torch.randn((), device=device, dtype=dtype, requires_grad=True)
 d = torch.randn((), device=device, dtype=dtype, requires_grad=True)
 
-learning_rate = 1e-6
-for t in range(2000):
+learning_rate = 1e-5
+for t in range(5000):
     # Forward pass: compute predicted y using operations on Tensors.
-    y_pred = a + b * x + c * x ** 2 + d * x ** 3
+    y_pred = a + b * torch.sin(c * x + d)
 
     # Compute and print loss using operations on Tensors.
     # Now loss is a Tensor of shape (1,)
@@ -56,4 +56,4 @@ for t in range(2000):
         c.grad = None
         d.grad = None
 
-print(f'Result: y = {a.item()} + {b.item()} x + {c.item()} x^2 + {d.item()} x^3')
+print(f'Result: y = {a.item()} + {b.item()} * sin({c.item()} * x + {d.item()})')
