@@ -21,6 +21,19 @@
 %
 %
 \begin{frame}{\insertsubsection}
+    Traditional methods
+    \begin{itemize}[<+->]
+        \item Linear, polinomial, logistic regression
+        \item Decision Trees
+        \item[] Gradient boosting (eg. XGBoost)
+        \item Support vector machine
+        \item Random Forest
+        \item Genetic Algorithms
+    \end{itemize}
+\end{frame}
+%
+%
+\begin{frame}{\insertsubsection}
     \begin{itemize}
         \item Traditional machine learning routines should be preferred over neural networks
         \item Deep learning can be powerful (and trendy)
@@ -33,3 +46,40 @@
 \end{frame}
 %
 %
+\subsection{Artificial Neural Networks}
+\label{subsec:ml-techniques-deep-learning}
+\begin{frame}{\insertsubsection}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{media/ICLH_Diagram_Batch_01_03-DeepNeuralNetwork-WHITEBG.png}
+        \caption{Standard, fully connected neural network~\cite{IBM2020}}
+    \end{figure}
+\end{frame}
+%
+%
+\begin{frame}{\insertsubsection}
+    \begin{itemize}
+        \item Universal function approximators
+        \item No guarantee that model will yield accurate predictins for new data
+        \item Question: Is the trained model optimal?
+        \item Neurons are at the heart of Neural Networks
+        \item[] They apply a function to the input variables $x_i$ to obtain output $y$ by multiplying with learnable weight $w_i$.
+        \begin{equation}
+            y = \sigma\left(\sum\limits_{i=1}^n w_ix_i + b\right)
+        \end{equation}
+        \item Multiple layers $\Rightarrow$ iterate this procedure
+    \end{itemize}
+\end{frame}
+%
+%
+\begin{frame}{\insertsubsection}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.35\textwidth]{media/ICLH_Diagram_Batch_01_04-GradientDescent-WHITEBG.png}
+        \caption{Iterative approach to finding a local optimum of the cost function.
+            It penalizes or rewards good/bad results. An example can be given by the mean squared error~\cite{IBM2020}.}
+    \end{figure}
+    \begin{equation}
+        MSE = \frac{1}{2m}\sum\limits_{i=1}^m(\hat{y}-y)^2
+    \end{equation}
+\end{frame}
