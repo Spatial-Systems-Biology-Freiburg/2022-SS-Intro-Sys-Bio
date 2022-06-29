@@ -83,3 +83,21 @@
         MSE = \frac{1}{2m}\sum\limits_{i=1}^m(\hat{y}-y)^2
     \end{equation}
 \end{frame}
+%
+%
+\subsection{Backpropagation}
+\label{subsec:ml-techniques-backpropagation}
+\begin{frame}{\insertsubsection}
+    \begin{enumerate}[<+->]
+        \item Let $g(x_i)$ be a network output of input variables $x_i$.
+        \item Let $C(y_i, g(x_i))$ be the loss function for predicted output $g(x_i)$ and target output $y_i$.
+        \item Let $W^l=(w^l_{jk})$ be the weights between layer $l-1$ and $l$ where $w^l_{jk}$ is the weight between $k$th node in layer $l-1$ and $j$th node in $l$.
+        \item Calculate the gradient of loss function in weight-space for fixed input-output pair $(x_i,y_i)$
+        \begin{equation}
+            \frac{\partial C}{\partial w^l_{jk}}(y_i, g(x_i))
+        \end{equation}
+        \item Multiple layers in Neural Networks mean that $\partial C/\partial w$ needs to be evaluated by chain rule.
+        \item[$\Rightarrow$] Modern Frameworks can do this process very efficiently.
+        \item To optimize: Go along steepest negative gradient of $\partial C/\partial w$.
+    \end{enumerate}
+\end{frame}
