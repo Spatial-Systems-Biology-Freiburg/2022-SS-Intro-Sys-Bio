@@ -15,7 +15,7 @@ Discuss strengths and weaknesses of the methods shown.
 %
 %
 \section*{Understanding Neural Networks}
-Let $x=(x_1,\dots,x_n)$ be the input vector und $g(x)=(g(x)_1,\dots,g(x)_m)$ the output vector of a neural network.
+Let $\vec{x}=(x_1,\dots,x_n)$ be the input vector und $\vec{g}(\vec{x})=(\vec{g}(\vec{x})_1,\dots,\vec{g}(\vec{x})_m)$ the output vector of a neural network.
 We denote the loss function (Cost-Funktion) with $C$ and with $L$ the number of layers.
 The weights between layer $l-1$ and $l$ and between node $j$ of layer $l$ and node $k$ of layer $l-1$ are written as $W^l=w^l_{jk}$.
 The number of nodes per layer $l$ is given by $\sigma_l$.
@@ -44,7 +44,7 @@ Figure~\ref{neural-network} shows an example for such a neural network.
         \node [every neuron/.try, neuron \m/.try ] (hidden-\m) at (3,2-\y) {\ifnum\y=3\else \ifnum\y=4 $t^1_{\sigma_1}$\else$t^1_{\m}$\fi\fi};
 
         \foreach \m [count=\y] in {1,missing,2}
-        \node [every neuron/.try, neuron \m/.try ] (output-\m) at (6,1.5-\y) {};
+        \node [every neuron/.try, neuron \m/.try ] (output-\m) at (6,1.5-\y) {\ifnum\y=2\else \ifnum\y=3 $t^2_{\sigma_2}$\else$t^2_{\m}$\fi\fi};
 
         \foreach \l [count=\i] in {1,2,n}
         \draw [<-] (input-\i) -- ++(-1,0)
@@ -52,7 +52,7 @@ Figure~\ref{neural-network} shows an example for such a neural network.
 
         \foreach \l [count=\i] in {1,m}
         \draw [->] (output-\i) -- ++(1,0)
-            node [above, midway] {$g(x)_\l$};
+            node [above, midway] {$g_\l(\vec{x})$};
 
         \foreach \i [count=\l] in {1,2,n}
         \foreach \j [count=\k] in {1,2,\sigma_1}
@@ -73,7 +73,8 @@ Figure~\ref{neural-network} shows an example for such a neural network.
 The total function $g$ of the layer can be split along the function of the individual layers $f^l$.
 We can thus write
 \begin{equation}
-    g(x) = f^L(W^Lf^{L-1}(W^{L-1}\dots f^1(W^1x)\dots))
+    \vec{g}(\vec{x}) = \vec{f}^L(W^L\vec{f}^{L-1}(W^{L-1}\dots \vec{f}^1(W^1\vec{x})\dots))
+    \label{apply-layer-chain}
 \end{equation}
 We inspect the first layer of our example in figure~\ref{neural-network}.
 Here, the result at the first hidden layer will be
@@ -88,6 +89,35 @@ or generally speaking for a larger neural network
 \exercise{Building Neural Networks}
 \begin{enumerate}
     \item Build a neural network with one input node and one output node and no hidden layers.
-    We fix the 
     This network should return double its input value.
+    Assume $f(x)=x$.
+    How do we need to chose the weights?
+    \item Extend the previous example to a vector, such that the result is of the same size buth with entries doubled.
+    \item Build a neural network with no hidden layers and an input vector $(x_1,\dots,x_n)$ that puts out the sum of all entries of this vector.
+    Still assume that $f(x)=x$.
+    \item Build a neural network with no hidden layer that outputs the scalar product of two input vectors $v=(v_1,\dots,v_n)$ and $w=(w_1,\dots,w_n)$.
+    Assume that all weights are exactly unity $w^l_{jk}=1$.
+    How does the output layer look like?
+    How do we need to choose $f$?
+    \item Build a neural network that 
 \end{enumerate}
+%
+%
+\exercise{Backpropagation}
+Backpropagation computes the gradient
+\begin{equation}
+    \frac{\partial C}{\partial w^l_{jk}}(\vec{g}(\vec{x}),\vec{y}) = \frac{\partial\vec{g}}{\partial w^l_{jk}}(\vec{x})\cdot\vec{\nabla}_yC\left(\vec{g}(\vec{x}), \vec{y}\right)
+\end{equation}
+at fixed input $\vec{x}$ and desired output $\vec{y}$ but with varying weights $w^l_{jk}$.
+We could calculate this derivative by applying the chain rule iteratively to equation~\ref{apply-layer-chain} but this would be extremely inefficient.\\
+Given a function
+\begin{equation}
+    G(x) = a(b(c(\dots z(x)\dots)))
+\end{equation}
+calculate the derivative with respect to $x$.
+How can we generalize this behaviour for the general case
+\begin{equation}
+    x^l = f^l(x^{l-1})
+\end{equation}
+where $l\in\{0,\dots,n\}$?
+What happens if we assume $f^l(x)=A^l g(x)$ where $A$ is a matrix?
