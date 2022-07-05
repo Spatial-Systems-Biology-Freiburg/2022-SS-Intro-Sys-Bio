@@ -45,6 +45,7 @@ if __name__ == "__main__":
 
     start_time = time.time()
     print("[{: >8.4f}] Solving ...".format(0), end="\r")
+    # Solve the initial value problem with the function, time series, initial values, method and 
     sol = solve_ivp(
         lambda t, y: ODE(t, y, D, ind, k2, start_time),
         t_span,
@@ -54,9 +55,12 @@ if __name__ == "__main__":
         vectorized=True,
         t_eval=t_eval
     )
+    # Obtain the results 
     res = sol.y.reshape((xmax, ymax, NVar, len(t_eval)))
     print("[{: >8.4f}s] Solving Done".format(time.time()-start_time))
 
+    # Which of the modeled components should be saved?
     component_index = 0
+    # The number of time steps after which a picture should be saved
     step = 5
     save_plots(res, component_index, step)
