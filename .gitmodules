@@ -5,5 +5,5 @@
 	path = Vorlesung/2022-06-29-Machine-Learning/utopia
 	url = https://github.com/xoolive/utopia
 [submodule "Vorlesung/2022-06-29-Machine-Learning/src/utopia"]
-	path = Vorlesung/2022-06-29-Machine-Learning/src/utopia
+	path = Vorlesung/2022-06-29-Machine-Learning-I/src/utopia
 	url = https://github.com/xoolive/utopia
