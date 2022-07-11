@@ -1,5 +1,6 @@
 from scipy import sparse
 import numpy as np
+import time
 
 def jpat(D,ind):
 	NVar = ind[1]-ind[0]
@@ -23,7 +24,8 @@ def sd(t,y,D,ind,k):
 	dydt[ind+2] = TTG1*GL3 - AC
 	return dydt
 
-def full_model(t,y,D,ind,k):
+def full_model(t,y,D,ind,k,start_time):
+	print("[{: >8.4f}s] Solving ...".format(time.time()-start_time), end="\r")
 	dydt = np.zeros(y.shape)
 	TTG1 = y[ind]
 	GL1  = y[ind+1]
@@ -44,3 +46,17 @@ def full_model(t,y,D,ind,k):
 	dydt[ind+6] = k[7]*GL3*GL1 - k[21]*AC2
 	return dydt
 
+
+def MYC1_model(t,y,D,ind,k):
+	dydt = np.zeros(y.shape)
+	Ac = y[ind]
+	An = y[ind+1]
+	Ic = y[ind+2]
+	In = y[ind+3]
+	T  = y[ind+4]
+
+	dydt[ind]   = An*(k[0] + k[1]*T) - Ac*(k[0] + k[2]) + np.dot(D, Ac)
+	dydt[ind+1] = k[3] + (k[4]*An*An)/(k[5] + In) - An*(k[0] + k[2] + k[1]*T) + k[0]*Ac
+	dydt[ind+2] = k[0]*In - Ic*(k[0] + k[6] + k[7]*T) + k[8]*np.dot(D,Ic)
+	dydt[ind+3] = k[9]*An*An + Ic*(k[0] + k[7]*T) - In*(k[6] + k[0])
+	dydt[ind+4] = k[10] - T*(k[11] + k[7]*Ic + k[1]*An)
