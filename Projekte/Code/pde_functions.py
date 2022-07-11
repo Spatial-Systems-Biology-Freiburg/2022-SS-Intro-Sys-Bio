@@ -49,6 +49,36 @@ def full_model(t,y,D,ind,k,start_time=None):
 	return dydt
 
 
+def jac_full_model(t,y,k):
+	dy_dtdp = np.zeros((y.size, y.size))
+	TTG1 = y[0]
+	GL1  = y[1]
+	GL3  = y[2]
+	TRY  = y[3]
+	CPC  = y[4]
+	AC1  = y[5]
+	AC2  = y[6]
+	# TODO there is a error somewhere in here!
+	dy_dtdp = np.array([
+		[-(k[1]+k[2]*GL3), 0, -TTG1*k[2], 0, 0, 0, 0],
+		[0, -(k[6]+k[7]*GL3), -GL1*k[7], 0, 0, 0, k[5]],
+		[
+			-k[2]*GL3,
+			-k[7]*GL3, 
+			-(k[11]+k[7]*GL1+k[13]*CPC)-k[2]*TTG1-k[12]*TRY,
+			-k[12]*GL3,
+			-k[13]*GL3,
+			2*(k[23]*k[ 9]*AC1)/(k[23]+AC1*AC1) - 2*AC1*(k[23]*k[ 9]*AC1*AC1)/(k[23]+AC1*AC1)**2,
+			2*(k[22]*k[10]*AC2)/(k[22]+AC2*AC2) - 2*AC2*(k[22]*k[10]*AC2*AC2)/(k[22]+AC2*AC2)**2
+		],
+		[0, 0, TRY*k[12], GL3*k[12], 0, 2*k[14]*AC1, 0],
+		[0, 0, -k[13]*CPC, 0, -k[13]*GL3, 0, 2*k[17]*AC2],
+		[k[2]*GL3, 0, k[2]*TTG1, 0, 0, -k[20], 0],
+		[0, k[7]*GL3, k[7]*GL1, 0, 0, 0, -k[21]]
+	])
+	return dy_dtdp
+
+
 def MYC1_model(t,y,D,ind,k,start_time=None):
 	if start_time != None:
 		print("[{: >8.4f}s] Solving ...".format(time.time()-start_time), end="\r")
@@ -64,3 +94,21 @@ def MYC1_model(t,y,D,ind,k,start_time=None):
 	dydt[ind+2] = k[0]*In - Ic*(k[0] + k[6] + k[7]*T) + k[8]*np.dot(D,Ic)
 	dydt[ind+3] = k[9]*An*An + Ic*(k[0] + k[7]*T) - In*(k[6] + k[0])
 	dydt[ind+4] = k[10] - T*(k[11] + k[7]*Ic + k[1]*An)
+	return dydt
+
+
+def jac_MYC1_model(t,y,k):
+	Ac = y[0]
+	An = y[1]
+	Ic = y[2]
+	In = y[3]
+	T  = y[4]
+	
+	dy_dtdp = np.array([
+		[-(k[0] + k[2]), (k[0] + k[1]*T), 0, 0, 0],
+		[k[0], 2*(k[4]*An)/(k[5] + In) - (k[0] + k[2] + k[1]*T), 0, (k[4]*An*An)/(k[5] + In)**2, An*k[1]],
+		[0, 0, -(k[0] + k[6] + k[7]*T), k[0], -Ic*k[7]],
+		[0, 2*k[9]*An, (k[0] + k[7]*T), -(k[6] + k[0]), Ic*k[7]],
+		[0, -T*k[1], -T*k[7], 0, -(k[11] + k[7]*Ic + k[1]*An)]
+	])
+	return dy_dtdp
