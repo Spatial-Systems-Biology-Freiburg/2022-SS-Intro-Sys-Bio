@@ -24,8 +24,10 @@ def sd(t,y,D,ind,k):
 	dydt[ind+2] = TTG1*GL3 - AC
 	return dydt
 
-def full_model(t,y,D,ind,k,start_time):
-	print("[{: >8.4f}s] Solving ...".format(time.time()-start_time), end="\r")
+
+def full_model(t,y,D,ind,k,start_time=None):
+	if start_time != None:
+		print("[{: >8.4f}s] Solving ...".format(time.time()-start_time), end="\r")
 	dydt = np.zeros(y.shape)
 	TTG1 = y[ind]
 	GL1  = y[ind+1]
@@ -47,7 +49,9 @@ def full_model(t,y,D,ind,k,start_time):
 	return dydt
 
 
-def MYC1_model(t,y,D,ind,k):
+def MYC1_model(t,y,D,ind,k,start_time=None):
+	if start_time != None:
+		print("[{: >8.4f}s] Solving ...".format(time.time()-start_time), end="\r")
 	dydt = np.zeros(y.shape)
 	Ac = y[ind]
 	An = y[ind+1]
