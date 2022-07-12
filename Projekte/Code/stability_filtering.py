@@ -67,6 +67,7 @@ def lsa(diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method='Radau',
     q : None
         If stability analysis encountered an error during the process, return None
     
+    ----------
     """
     # Initialize the simulation in 2d with only 2x2 cells
     n_x = 2
