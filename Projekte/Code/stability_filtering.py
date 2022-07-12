@@ -124,10 +124,7 @@ def lsa(diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method='Radau',
         A = J - diffusion_D * mode**2
         evs_spat = np.linalg.eigvals(A)
         if len(evs_spat[np.real(evs_spat) >= 0.0]) > 0:
-            # print("Yes: {} {}".format(mode, np.max(evs_spat)))
             return True
-        # else:
-            # print("No : {} {}".format(mode, np.max(evs_spat)))
     return False
 
 
