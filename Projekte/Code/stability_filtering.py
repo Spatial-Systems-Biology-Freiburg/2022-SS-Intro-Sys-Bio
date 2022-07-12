@@ -141,9 +141,9 @@ if __name__ == "__main__":
     t_span = (0, 1000)
 
     # Parameters that we want to test
-    k_myc1 = [
+    k_myc1 = np.array([
         6.1823,9.3728,0.7493,35.9270,0.2009,0.1153,127.0200,604.9500,0.1164,38.5770,321.8200,0.6033
-    ]
+    ])
 
     # Supply the coefficients of the diffusion part here. This varies from model to model!
     # full_model
@@ -151,5 +151,6 @@ if __name__ == "__main__":
     # MYC1_model
     diffusion_D = np.diag([1, 0, k_myc1[8], 0, 0])
 
-    res = lsa(diffusion_D, k_myc1, MYC1_model, jac_MYC1_model, t_span, xmax, ymax, NVar)
-    print(res)
+    for i in np.linspace(0, 5, 5):
+        res = lsa(diffusion_D, k_myc1*i, MYC1_model, jac_MYC1_model, t_span, xmax, ymax, NVar)
+        print(res)
