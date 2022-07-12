@@ -17,7 +17,22 @@ def fourier_modes(xmax, ymax):
     return dpq
 
 
-def lsa(diffusion_D, k, ode, jacobian, t_span, xmax, ymax, NVar, method='Radau'):
+def log_exit_message(reason, diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method, error_logs_file="error.logs"):
+    f = open(error_logs_file, "a")
+    message  = "____________________________________\n"
+    message += "Parameter set could not be analyzed!\n"
+    message += "k           = {}\n".format(k)
+    message += "diffusion_D = diag({})\n".format([diffusion_D[i,i] for i in range(len(diffusion_D))])
+    message += "t_span      = {}\n".format(t_span)
+    message += "xmax        = {}\n".format(xmax)
+    message += "ymax        = {}\n".format(ymax)
+    message += "NVar        = {}\n".format(NVar)
+    message += reason + "\n"
+    f.write(message)
+    f.close()
+
+
+def lsa(diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method='Radau', error_logs_file="error.logs"):
     """
     Inspects the supplied parameters for stability in time and spatial instability.
     
@@ -68,15 +83,20 @@ def lsa(diffusion_D, k, ode, jacobian, t_span, xmax, ymax, NVar, method='Radau')
     D = np.zeros(D.shape)
     TS = 0
     # Obtain the steady steate of the supplied ode
-    sol = solve_ivp(
-        lambda t, y: ode(t, y, D, ind, k),
-        t_span,
-        y0,
-        method='Radau',
-        jac_sparsity=jpat(D,ind),
-        t_eval=t_span,
-        vectorized=True,
-    )
+    try:
+        sol = solve_ivp(
+            lambda t, y: pde(t, y, D, ind, k),
+            t_span,
+            y0,
+            method='Radau',
+            jac_sparsity=jpat(D,ind),
+            t_eval=t_span,
+            vectorized=True,
+        )
+    except:
+        reason = "Solving of pde system encountered errors"
+        log_exit_message(reason, diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method)
+        return None
     # Obtain the steady state via the last result
     # then average over spatial dimensions
     se = sol.y[:,-1].reshape(n_x, n_y, NVar)
@@ -85,7 +105,9 @@ def lsa(diffusion_D, k, ode, jacobian, t_span, xmax, ymax, NVar, method='Radau')
     sd = np.std(se, axis=(0,1))
     # if not raise Error
     if np.max(sd/ss) >= 1e-6:
-        raise RuntimeError("Steady state could not be determined correctly. Spatial variation of component {} is {: 4.2e}".format(np.argmax(sd/ss), np.max(sd/ss)))
+        reason = "Steady state could not be determined correctly. Spatial variation of component {} is {: 4.2e}".format(np.argmax(sd/ss), np.max(sd/ss))
+        log_exit_message(reason, diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method)
+        return None
     
     # Fill the jacobian with values of the steady state and provided parameters
     J = jacobian(0, ss, k)
