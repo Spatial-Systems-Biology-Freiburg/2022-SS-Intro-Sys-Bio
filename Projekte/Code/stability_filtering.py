@@ -17,7 +17,7 @@ def fourier_modes(xmax, ymax):
     # return np.unique(dpq.flatten())
     p = np.arange(0, xmax)*np.pi/xmax
     q = np.arange(0, ymax)*np.pi/ymax
-    dpq = np.unique(np.array([p, q]).flatten())
+    dpq = np.unique(np.concatenate((p, q)))
     return dpq
 
 
