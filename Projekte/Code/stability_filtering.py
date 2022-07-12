@@ -18,6 +18,41 @@ def fourier_modes(xmax, ymax):
 
 
 def lsa(diffusion_D, k, ode, jacobian, t_span, xmax, ymax, NVar, method='Radau'):
+    """
+    Inspects the supplied parameters for stability in time and spatial instability.
+    
+    Parameters
+    ----------
+    diffusion_D : diagonal matrix
+        contains the diffusion constants in a diagonal matrix
+    k : array-like
+        The parameter which needs to be supplied to the ode and jacobian
+    pde : callable
+        Pde to inspect for stability
+    jacobian : callable
+        The derivative of the non-spatial reaction-kinetics part of the pde
+    t_span : tuple of 2 floats
+        Contains start and end point to determine the steady state
+    xmax : int
+        Maximum x-size of the solving domain
+    ymax : int
+        Maximum y-size of the solving domain
+    NVar : int
+        Number of variables/components in the system
+    method : str
+        Optional same as in scipy.integrate.solve_ivp
+    error_logs_file : str
+        Name of the file to store error messages.
+
+    Returns
+    ----------
+    s : bool
+        If stability analysis was successfull return True of False 
+        depending if the parameter meets the criteria
+    q : None
+        If stability analysis encountered an error during the process, return None
+    
+    """
     # Initialize the simulation in 2d with only 2x2 cells
     n_x = 2
     n_y = 2
