@@ -11,10 +11,6 @@ from pde_int import couplingMatrix, IJKth
 
 def fourier_modes(xmax, ymax):
     # Determine the possible modes:
-    # TODO verify this. It may not be correct
-    # p, q = np.meshgrid(np.arange(1, xmax+1), np.arange(1, ymax+1))
-    # dpq = np.sin(np.pi*p/xmax)**2 +np.sin(np.pi*q/ymax)**2
-    # return np.unique(dpq.flatten())
     p = np.arange(0, xmax)*np.pi/xmax
     q = np.arange(0, ymax)*np.pi/ymax
     dpq = np.unique(np.concatenate((p, q)))
@@ -66,16 +62,10 @@ def lsa(diffusion_D, k, ode, jacobian, t_span, xmax, ymax, NVar, method='Radau')
     if len(pos_eig) > 0:
         return False
     
-    # TODO verify the following lines of the function.
-    # They may be incorrect!
-    
     # Check spatial instability stability
     for mode in dpq:
         A = J - diffusion_D * mode**2
         evs_spat = np.linalg.eigvals(A)
-        # print("Mode: {:1.3e}".format(mode))
-        # print(A)
-        # print(evs_spat)
         if len(evs_spat[np.real(evs_spat) >= 0.0]) > 0:
             # print("Yes: {} {}".format(mode, np.max(evs_spat)))
             return True
@@ -91,9 +81,12 @@ if __name__ == "__main__":
     xmax = 15
     ymax = 15
     
+    # Number of variables
     NVar=5
+    # Just used to calculate the steady state of the equations
     t_span = (0, 1000)
 
+    # Parameters that we want to test
     k_myc1 = [
         6.1823,9.3728,0.7493,35.9270,0.2009,0.1153,127.0200,604.9500,0.1164,38.5770,321.8200,0.6033
     ]
@@ -104,6 +97,5 @@ if __name__ == "__main__":
     # MYC1_model
     diffusion_D = np.diag([1, 0, k_myc1[8], 0, 0])
 
-    for i in range(1):
-        res = lsa(diffusion_D, k_myc1, MYC1_model, jac_MYC1_model, t_span, xmax, ymax, NVar)
-        print(res)
+    res = lsa(diffusion_D, k_myc1, MYC1_model, jac_MYC1_model, t_span, xmax, ymax, NVar)
+    print(res)
