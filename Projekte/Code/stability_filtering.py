@@ -19,6 +19,7 @@ def fourier_modes(xmax, ymax):
 
 
 def log_exit_message(reason, diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method, error_logs_file="error.logs"):
+    print("Warning: A parameter set could not be analyzed. Writing full error log to {}".format(error_logs_file))
     f = open(error_logs_file, "a")
     message  = "____________________________________\n"
     message += "Parameter set could not be analyzed!\n"
