@@ -107,7 +107,7 @@ def lsa(diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method='Radau',
     ss = np.average(se, axis=(0,1))
     sd = np.std(se, axis=(0,1))
     # if not raise Error
-    if np.max(sd/ss) >= 1e-6:
+    if np.max(sd/ss) >= 1e-2:
         reason = "Steady state could not be determined correctly. Spatial variation of component {} is {: 4.2e}".format(np.argmax(sd/ss), np.max(sd/ss))
         log_exit_message(reason, diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method)
         return None
