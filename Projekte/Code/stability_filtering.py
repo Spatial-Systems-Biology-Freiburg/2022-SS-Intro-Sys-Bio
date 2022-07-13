@@ -74,7 +74,7 @@ def lsa(diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method='Radau',
     # Initialize the simulation in 2d with only 2x2 cells
     n_x = 2
     n_y = 2
-    y0 = random_initialiser(n_x, n_y, NVar)
+    y0 = np.random.normal(loc=1, scale=0.1, size=n_x * n_y * NVar)
     bndcondition="zeroflux"
     celltype="quadratic"
     D = couplingMatrix(n_x, n_y, bndcondition, celltype)
@@ -91,7 +91,7 @@ def lsa(diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method='Radau',
             lambda t, y: pde(t, y, D, ind, k),
             t_span,
             y0,
-            method='BDF',
+            method='Radau',
             jac_sparsity=jpat(D,ind),
             t_eval=t_span,
             vectorized=True,
