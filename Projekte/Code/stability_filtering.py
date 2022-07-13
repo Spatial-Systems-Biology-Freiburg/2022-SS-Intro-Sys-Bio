@@ -3,6 +3,7 @@
 import numpy as np
 from scipy.integrate import solve_ivp
 import multiprocessing as mp
+import time
 
 from pde_functions import jpat, full_model, MYC1_model, jac_full_model, jac_MYC1_model
 from example import random_initialiser
@@ -18,6 +19,7 @@ def fourier_modes(xmax, ymax):
 
 
 def log_exit_message(reason, diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method, error_logs_file="error.logs"):
+    print("Warning: A parameter set could not be analyzed. Writing full error log to {}".format(error_logs_file))
     f = open(error_logs_file, "a")
     message  = "____________________________________\n"
     message += "Parameter set could not be analyzed!\n"
@@ -89,7 +91,7 @@ def lsa(diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method='Radau',
             lambda t, y: pde(t, y, D, ind, k),
             t_span,
             y0,
-            method='Radau',
+            method='BDF',
             jac_sparsity=jpat(D,ind),
             t_eval=t_span,
             vectorized=True,
@@ -139,7 +141,7 @@ if __name__ == "__main__":
     # Number of variables
     NVar=5
     # Just used to calculate the steady state of the equations
-    t_span = (0, 1000)
+    t_span = (0, 100)
 
     # Parameters that we want to test
     k_myc1 = np.array([
@@ -152,6 +154,9 @@ if __name__ == "__main__":
     # MYC1_model
     diffusion_D = np.diag([1, 0, k_myc1[8], 0, 0])
 
-    for i in np.linspace(0, 5, 5):
+    start_time = time.time()
+    N_runs = 200
+    for i in np.linspace(0, 100, N_runs):
         res = lsa(diffusion_D, k_myc1*i, MYC1_model, jac_MYC1_model, t_span, xmax, ymax, NVar)
-        print(res)
+    print("Total time:   {: 2.4f}".format(time.time()-start_time))
+    print("Time per run: {: 2.4f}".format((time.time()-start_time)/N_runs))
