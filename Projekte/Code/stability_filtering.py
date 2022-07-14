@@ -34,7 +34,7 @@ def log_exit_message(reason, diffusion_D, k, pde, jacobian, t_span, xmax, ymax, 
     f.close()
 
 
-def lsa(diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method='Radau', error_logs_file="error.logs"):
+def lsa(diffusion_D, k, pde, jacobian, t_span, y0, xmax, ymax, NVar, method='Radau', error_logs_file="error.logs"):
     """
     Inspects the supplied parameters for stability in time and spatial instability.
     
@@ -74,7 +74,6 @@ def lsa(diffusion_D, k, pde, jacobian, t_span, xmax, ymax, NVar, method='Radau',
     # Initialize the simulation in 2d with only 2x2 cells
     n_x = 2
     n_y = 2
-    y0 = np.random.normal(loc=1, scale=0.1, size=n_x * n_y * NVar)
     bndcondition="zeroflux"
     celltype="quadratic"
     D = couplingMatrix(n_x, n_y, bndcondition, celltype)

@@ -31,39 +31,43 @@ def determine_if_pattern(res, component_index, xmax, ymax):
 
     # Reject if we only have fluctuations
     if (y_std / (y_max - y_min))[component_index] > 1e-2:
-        return False, n_peaks, "Rejected: y_std / (y_max - y_min) > 1e-2"
+        return False, "Rejected: y_std / (y_max - y_min) > 1e-2"
     # Reject if there are too many peaks
     if n_peaks >= y[:,:,component_index].size / 2.0:
-        return False, n_peaks, "Rejected: n_peaks > xmax * ymax / 2"
+        return False, "Rejected: n_peaks > xmax * ymax / 2"
     # Reject if number of peaks is not large enough
     if n_peaks < 4:
-        return False, n_peaks, "Rejected: n_peaks < 4"
+        return False, "Rejected: n_peaks < 4"
     # Reject if there are adjacent peaks in x or y direction
     if np.sum(filt[:-1]*filt[1:]) > 0:
-        return False, n_peaks, "Rejected: Adjacent peaks"
+        return False, "Rejected: Adjacent peaks"
     if np.sum(filt[:,:-1]*filt[:,1:]) > 0:
-        return False, n_peaks, "Rejected: Adjacent peaks"
+        return False, "Rejected: Adjacent peaks"
     # Otherwise assume that a pattern was successfully generated
-    return True, n_peaks, "Not rejected"
+    return True, "Not rejected"
 
 
-def stability_wrapper(k, diff_func: callable, model: callable, jac_model: callable, t_span, xmax, ymax, NVar, method='Radau', error_logs_file="error.logs"):
+def stability_wrapper(k, diff_func: callable, model: callable, jac_model: callable, t_span, y0, xmax, ymax, NVar, method='Radau', error_logs_file="error.logs"):
     # Actually test the parameter configuration
     diffusion_D = diff_func(k)
-    res = lsa(diffusion_D, k, model, jac_model, t_span, xmax, ymax, NVar, method='Radau', error_logs_file="error.logs")
+    lsa_succ = lsa(diffusion_D, k, model, jac_model, t_span, y0, xmax, ymax, NVar, method='Radau', error_logs_file="error.logs")
 
     # If the test was successfull, store results
-    return (res, diffusion_D, k, t_span, xmax, ymax, NVar)
+    return (lsa_succ, diffusion_D, k, t_span, xmax, ymax, NVar)
 
 
 def diffusion_func_myc1(k):
     return np.diag([1, 0, k[8], 0, 0])
 
 
-def solving_wrapper(p, t_eval, model, bndcondition, celltype, component_index):
-    (res, diffusion_D, k, t_span, xmax, ymax, NVar) = p
-    if res == False:
-        return False, -1, "Rejected by stability analysis", p
+def diffusion_func_full_model(k):
+    return np.diag([k[1]*k[3], 0, 0, k[15]*k[16], k[18]*k[19], 0, 0])
+
+
+def solving_wrapper(p, t_eval, model, bndcondition, celltype, component_index, y0):
+    (succ_lsa, diffusion_D, k, t_span, xmax, ymax, NVar) = p
+    if succ_lsa == False:
+        return False, "Rejected by stability analysis", p, y0
     D = couplingMatrix(xmax, ymax, bndcondition, celltype)
     ind = IJKth(1, np.arange(ymax), np.arange(xmax), ymax, NVar)
     # Solve the coupled ODEs
@@ -78,7 +82,39 @@ def solving_wrapper(p, t_eval, model, bndcondition, celltype, component_index):
     )
     res = sol.y.reshape((xmax, ymax, NVar, len(t_eval)))
     msg = determine_if_pattern(res, component_index, xmax, ymax)
-    return msg, p
+    return True, msg, p, res[-1]
+
+
+def stability_and_solving_wrapper(
+        k,
+        diff_func: callable,
+        model: callable,
+        jac_model: callable,
+        t_span,
+        xmax,
+        ymax,
+        NVar,
+        t_eval,
+        bndcondition,
+        celltype,
+        y0,
+        component_index,
+        method='Radau',
+        error_logs_file="error.logs"
+    ):
+    p = stability_wrapper(k, diff_func, model, jac_model, t_span, y0, xmax, ymax, NVar, method, error_logs_file)
+    (succ_solv, msg_solv, p, res) = solving_wrapper(p, t_eval, model, bndcondition, celltype, component_index, y0)
+    
+    # Create output dictionary
+    (lsa_succ, diffusion_D, k, t_span, xmax, ymax, NVar) = p
+    out = {}
+    
+    out["LSA"] = {"succ": lsa_succ}
+    out["solving"] = {"success": succ_solv, "message": msg_solv, "t_eval": t_eval.tolist(), "method": method, "error_logs_file": error_logs_file}
+    out["parameters"] = {"k": k.tolist(), "diffusion_D": diffusion_D.diagonal().tolist()}
+    out["analysis"] = {"component_index": component_index, "result_last": res[:,:,-1].tolist()}
+    out["model"] = {"model_name": model.__name__, "model_jac_name": jac_model.__name__, "bndcondition": bndcondition, "celltype": celltype, "xmax": xmax, "ymax": ymax}
+    return out
 
 
 if __name__ == "__main__":
@@ -143,24 +179,20 @@ if __name__ == "__main__":
 
     p_sample = np.concatenate(([k1, k2], p_sample))
 
-    ##########################
-    ### Stability Analysis ###
-    ##########################
+    ####################################################
+    ### Stability Analysis and solving the equations ###
+    ####################################################
     # Store valid results in list
     p_sample_valid = []
-
-    # Just for nice output
-    start_time = time.time()
     
-    # Define the parameters (diffusion_D and k) to test
-    # diffusion_D = np.diag([k[1]*k[3], 0, 0, k[15]*k[16], k[18]*k[19], 0, 0])
-    diff_func = lambda k: np.diag([1, 0, k[8], 0, 0])
+    # The index of the component to analyze for stability
+    component_index = 1
 
     # Parallelize stability analysis
-    p = mp.Pool()
+    pool = mp.Pool()
 
-    p_sample_valid = p.starmap(
-        stability_wrapper,
+    p_sample_valid = pool.starmap(
+        stability_and_solving_wrapper,
         zip(
             p_sample,
             it.repeat(diffusion_func_myc1),
@@ -169,31 +201,11 @@ if __name__ == "__main__":
             it.repeat(t_span),
             it.repeat(xmax),
             it.repeat(ymax),
-            it.repeat(NVar)
-        )
-    )
-
-    # Iterate over all parameters
-    # for k in p_sample:
-    #     p_sample_valid.append(stability_wrapper(k, diff_func, model, jac_model, t_span, xmax, ymax, NVar))
-
-    #############################
-    ### Solving the Equations ###
-    #############################
-    # Solve the coupled ODEs and test for patterns
-    component_index = 1
-
-    # Iterate over all valid parameter combinations
-    # for p in p_sample_valid:
-
-    res = p.starmap(
-        solving_wrapper,
-        zip(
-            p_sample_valid,
+            it.repeat(NVar),
             it.repeat(t_eval),
-            it.repeat(model),
             it.repeat(bndcondition),
             it.repeat(celltype),
+            it.repeat(y0),
             it.repeat(component_index)
         )
     )
