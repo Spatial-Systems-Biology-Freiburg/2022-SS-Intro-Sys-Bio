@@ -8,6 +8,7 @@ import time
 from scipy.stats import qmc
 import multiprocessing as mp
 import itertools as it
+import json
 
 # Custom code Imports
 from stability_filtering import lsa
@@ -209,3 +210,8 @@ if __name__ == "__main__":
             it.repeat(component_index)
         )
     )
+
+    save_dict = {"Run {:010.0f}".format(i): p for i, p in enumerate(p_sample_valid)}
+
+    with open('results.json', 'w') as results_file:
+        results_file.write(json.dumps(save_dict))
