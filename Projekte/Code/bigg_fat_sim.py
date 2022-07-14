@@ -14,7 +14,6 @@ import json
 from stability_filtering import lsa
 from pde_functions import jpat, full_model, jac_full_model, MYC1_model, jac_MYC1_model
 from pde_int import couplingMatrix, IJKth
-from save_results import save_plots
 from example import random_initialiser
 
 
