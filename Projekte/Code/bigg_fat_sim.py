@@ -9,6 +9,7 @@ from scipy.stats import qmc
 import multiprocessing as mp
 import itertools as it
 import json
+from pathlib import Path
 
 # Custom code Imports
 from stability_filtering import lsa
@@ -108,6 +109,7 @@ def solving_wrapper(p, t_eval, model, bndcondition, celltype, component_index, y
 
 
 def stability_and_solving_wrapper(
+        solving_idx,
         k,
         diff_func: callable,
         model: callable,
@@ -122,21 +124,28 @@ def stability_and_solving_wrapper(
         y0,
         component_index,
         method='Radau',
-        error_logs_file="error.logs"
+        error_logs_file="error.logs",
+        output_folder=Path("out")
     ):
+    # Gather all the data from the run
     y0_stability = y0.reshape(xmax, ymax, NVar)[0:2,0:2,:].reshape(2*2*NVar)
     p = stability_wrapper(k, diff_func, model, jac_model, t_span, y0_stability, xmax, ymax, NVar, method, error_logs_file)
     (succ_solv, msg_solv, p, res) = solving_wrapper(p, t_eval, model, bndcondition, celltype, component_index, y0)
-    
-    # Create output dictionary
     (lsa_succ, diffusion_D, k, t_span, xmax, ymax, NVar) = p
-    out = {}
 
+    # Create output dictionary
+    out = {}
     out["LSA"] = {"succ": lsa_succ}
     out["solving"] = {"success": succ_solv, "message": msg_solv, "t_eval": t_eval.tolist(), "method": method, "error_logs_file": error_logs_file}
     out["parameters"] = {"k": k.tolist(), "diffusion_D": diffusion_D.diagonal().tolist()}
     out["analysis"] = {"component_index": component_index, "result_last": res.tolist()}
     out["model"] = {"model_name": model.__name__, "model_jac_name": jac_model.__name__, "bndcondition": bndcondition, "celltype": celltype, "xmax": xmax, "ymax": ymax}
+
+    # Dump this dictionary into a json in output folder
+    output_folder.mkdir(parents=True, exist_ok=True)
+    results_file = open(output_folder / 'results_{:010.0f}.json'.format(solving_idx), 'w')
+    results_file.write(json.dumps(out))
+    results_file.close()
     return out
 
 
@@ -176,7 +185,7 @@ if __name__ == "__main__":
     ##########################
     # use latin hypercube to sample the parameter space with boundaries
     N_param = 12
-    N_samples = 2000
+    N_samples = 100000
     p_low = [np.log10(0.05)] * N_param
     p_high = [np.log10(50.0)] * N_param
 
@@ -217,6 +226,7 @@ if __name__ == "__main__":
     p_sample_valid = pool.starmap(
         stability_and_solving_wrapper,
         zip(
+            range(len(p_sample)),
             p_sample,
             it.repeat(diffusion_func_myc1),
             it.repeat(model),
@@ -233,7 +243,4 @@ if __name__ == "__main__":
         )
     )
 
-    save_dict = {"Run {:010.0f}".format(i): p for i, p in enumerate(p_sample_valid)}
-
-    with open('results.json', 'w') as results_file:
-        results_file.write(json.dumps(save_dict))
+    # save_dict = {"Run {:010.0f}".format(i): p for i, p in enumerate(p_sample_valid)}
