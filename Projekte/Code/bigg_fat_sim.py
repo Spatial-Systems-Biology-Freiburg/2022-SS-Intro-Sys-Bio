@@ -17,8 +17,30 @@ from pde_int import couplingMatrix, IJKth
 from example import random_initialiser
 
 
-def determine_if_pattern(res, component_index, xmax, ymax):
-    y = res[:,:,:,-1]
+def determine_if_pattern(y, component_index, xmax, ymax):    
+    """
+    Determines if a pattern was found
+    
+    Parameters
+    ----------
+    y : array-like
+        result of the simulation at final time step with 3 dimensions
+    component_indices : array-like
+        contains all indices of components that are supposed to be analyzed for pattern formation
+    xmax : int
+        maximum domain of the simulation in x-direction
+    ymax : int
+        maximum domain of the simulation in y-direction
+    
+    Returns
+    ----------
+    s : bool
+        If a pattern was not rejected, this parameter is True
+    msg : string
+        The message of how the parameter was (not) rejected
+    
+    ----------
+    """
     # Determine if a pattern was created
     y_min = np.min(y, axis=(0,1))
     y_max = np.max(y, axis=(0,1))
@@ -67,7 +89,7 @@ def diffusion_func_full_model(k):
 def solving_wrapper(p, t_eval, model, bndcondition, celltype, component_index, y0):
     (succ_lsa, diffusion_D, k, t_span, xmax, ymax, NVar) = p
     if succ_lsa == False:
-        return False, "Rejected by stability analysis", p, y0
+        return False, "Rejected by stability analysis", p, y0.reshape(xmax, ymax, NVar)
     D = couplingMatrix(xmax, ymax, bndcondition, celltype)
     ind = IJKth(1, np.arange(ymax), np.arange(xmax), ymax, NVar)
     # Solve the coupled ODEs
@@ -80,9 +102,9 @@ def solving_wrapper(p, t_eval, model, bndcondition, celltype, component_index, y
         vectorized = True,
         t_eval = t_eval
     )
-    res = sol.y.reshape((xmax, ymax, NVar, len(t_eval)))
-    msg = determine_if_pattern(res, component_index, xmax, ymax)
-    return True, msg, p, res[-1]
+    last_res = sol.y.reshape(xmax, ymax, NVar, len(t_eval))[:,:,:,-1]
+    msg = determine_if_pattern(last_res, component_index, xmax, ymax)
+    return True, msg, p, last_res
 
 
 def stability_and_solving_wrapper(
@@ -102,17 +124,18 @@ def stability_and_solving_wrapper(
         method='Radau',
         error_logs_file="error.logs"
     ):
-    p = stability_wrapper(k, diff_func, model, jac_model, t_span, y0, xmax, ymax, NVar, method, error_logs_file)
+    y0_stability = y0.reshape(xmax, ymax, NVar)[0:2,0:2,:].reshape(2*2*NVar)
+    p = stability_wrapper(k, diff_func, model, jac_model, t_span, y0_stability, xmax, ymax, NVar, method, error_logs_file)
     (succ_solv, msg_solv, p, res) = solving_wrapper(p, t_eval, model, bndcondition, celltype, component_index, y0)
     
     # Create output dictionary
     (lsa_succ, diffusion_D, k, t_span, xmax, ymax, NVar) = p
     out = {}
-    
+
     out["LSA"] = {"succ": lsa_succ}
     out["solving"] = {"success": succ_solv, "message": msg_solv, "t_eval": t_eval.tolist(), "method": method, "error_logs_file": error_logs_file}
     out["parameters"] = {"k": k.tolist(), "diffusion_D": diffusion_D.diagonal().tolist()}
-    out["analysis"] = {"component_index": component_index, "result_last": res[:,:,-1].tolist()}
+    out["analysis"] = {"component_index": component_index, "result_last": res.tolist()}
     out["model"] = {"model_name": model.__name__, "model_jac_name": jac_model.__name__, "bndcondition": bndcondition, "celltype": celltype, "xmax": xmax, "ymax": ymax}
     return out
 
