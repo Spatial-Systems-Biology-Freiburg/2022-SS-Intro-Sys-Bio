@@ -103,8 +103,8 @@ def solving_wrapper(p, t_eval, model, bndcondition, celltype, component_index, y
         t_eval = t_eval
     )
     last_res = sol.y.reshape(xmax, ymax, NVar, len(t_eval))[:,:,:,-1]
-    msg = determine_if_pattern(last_res, component_index, xmax, ymax)
-    return True, msg, p, last_res
+    (succ, msg) = determine_if_pattern(last_res, component_index, xmax, ymax)
+    return succ, msg, p, last_res
 
 
 def stability_and_solving_wrapper(
